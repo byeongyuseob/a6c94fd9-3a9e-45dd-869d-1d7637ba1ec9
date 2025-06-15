@@ -1,4 +1,4 @@
-
+import React from "react";
 import { useState, useMemo, useCallback } from "react";
 import { ProjectCard } from "./ProjectCard";
 import { Button } from "@/components/ui/button";
@@ -214,7 +214,6 @@ const ProjectListComponent = ({ onProjectSelect, selectedProject }: ProjectListP
             project={project}
             isSelected={selectedProject === project.id}
             onSelect={() => onProjectSelect(project.id)}
-            tabIndex={0}
             aria-selected={selectedProject === project.id}
           />
         ))}
