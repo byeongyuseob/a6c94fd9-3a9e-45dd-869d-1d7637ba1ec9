@@ -22,7 +22,7 @@ import {
   SidebarMenuButton,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Plus, Search, FolderOpen, Users } from "lucide-react";
+import { Plus, Search, FolderOpen, Users, Folder } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Project {
@@ -108,16 +108,16 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
   const isCollapsed = state === "collapsed";
 
   return (
-    <Sidebar collapsible="icon" className="border-r">
-      <SidebarHeader className="border-b">
+    <Sidebar variant="inset">
+      <SidebarHeader>
+        <div className="flex items-center gap-2 px-2 py-1">
+          <FolderOpen className="h-5 w-5" />
+          {!isCollapsed && <span className="font-semibold">프로젝트</span>}
+        </div>
+        
         {!isCollapsed && (
           <>
-            <div className="flex items-center gap-2 p-2">
-              <FolderOpen className="h-5 w-5" />
-              <span className="font-semibold">프로젝트</span>
-            </div>
-            
-            <div className="p-2">
+            <div className="px-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
@@ -129,7 +129,7 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
               </div>
             </div>
 
-            <div className="p-2">
+            <div className="px-2">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button size="sm" className="w-full">
@@ -174,12 +174,6 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
             </div>
           </>
         )}
-        
-        {isCollapsed && (
-          <div className="p-2 flex justify-center">
-            <FolderOpen className="h-5 w-5" />
-          </div>
-        )}
       </SidebarHeader>
 
       <SidebarContent>
@@ -192,29 +186,21 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
                   <SidebarMenuButton 
                     onClick={() => onProjectSelect(project.id)}
                     isActive={selectedProject === project.id}
-                    className={isCollapsed ? "justify-center" : "flex flex-col items-start h-auto p-3 hover:bg-accent"}
                     tooltip={isCollapsed ? project.name : undefined}
                   >
-                    {isCollapsed ? (
-                      <FolderOpen className="h-4 w-4" />
-                    ) : (
-                      <>
-                        <div className="flex items-center justify-between w-full mb-1">
-                          <span className="font-medium text-sm">{project.name}</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground text-left line-clamp-2">
-                          {project.description}
-                        </p>
-                        <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                    <Folder className="h-4 w-4" />
+                    {!isCollapsed && (
+                      <div className="flex flex-col items-start min-w-0 flex-1">
+                        <span className="font-medium text-sm truncate w-full">{project.name}</span>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Users className="h-3 w-3" />
                             {project.memberCount}명
                           </div>
-                          <div>
-                            {project.lastUpdated}
-                          </div>
+                          <span>•</span>
+                          <span>{project.lastUpdated}</span>
                         </div>
-                      </>
+                      </div>
                     )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
