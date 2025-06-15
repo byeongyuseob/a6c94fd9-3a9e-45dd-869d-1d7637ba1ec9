@@ -20,9 +20,9 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
-import { Plus, Search, FolderOpen, Users, Settings as SettingsIcon } from "lucide-react";
+import { Plus, Search, FolderOpen, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Project {
@@ -40,6 +40,7 @@ interface ProjectSidebarProps {
 
 export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSidebarProps) => {
   const { toast } = useToast();
+  const { state } = useSidebar();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newProject, setNewProject] = useState({
@@ -104,77 +105,86 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
     });
   };
 
-  return (
-    <Sidebar className="border-r">
-      <SidebarHeader className="border-b">
-        <div className="flex items-center justify-between p-2">
-          <div className="flex items-center gap-2">
-            <FolderOpen className="h-5 w-5" />
-            <span className="font-semibold">프로젝트</span>
-          </div>
-          <SidebarTrigger />
-        </div>
-        
-        <div className="p-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="프로젝트 검색..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-8"
-            />
-          </div>
-        </div>
+  const isCollapsed = state === "collapsed";
 
-        <div className="p-2">
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="w-full">
-                <Plus className="h-4 w-4 mr-2" />
-                새 프로젝트
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>새 프로젝트 생성</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="name">프로젝트 이름</Label>
-                  <Input
-                    id="name"
-                    value={newProject.name}
-                    onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
-                    placeholder="프로젝트 이름을 입력하세요"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description">설명</Label>
-                  <Input
-                    id="description"
-                    value={newProject.description}
-                    onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                    placeholder="프로젝트 설명을 입력하세요"
-                  />
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    취소
-                  </Button>
-                  <Button onClick={handleCreateProject}>
-                    생성
-                  </Button>
-                </div>
+  return (
+    <Sidebar collapsible="icon" className="border-r">
+      <SidebarHeader className="border-b">
+        {!isCollapsed && (
+          <>
+            <div className="flex items-center gap-2 p-2">
+              <FolderOpen className="h-5 w-5" />
+              <span className="font-semibold">프로젝트</span>
+            </div>
+            
+            <div className="p-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="프로젝트 검색..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 h-8"
+                />
               </div>
-            </DialogContent>
-          </Dialog>
-        </div>
+            </div>
+
+            <div className="p-2">
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="w-full">
+                    <Plus className="h-4 w-4 mr-2" />
+                    새 프로젝트
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>새 프로젝트 생성</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="name">프로젝트 이름</Label>
+                      <Input
+                        id="name"
+                        value={newProject.name}
+                        onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
+                        placeholder="프로젝트 이름을 입력하세요"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="description">설명</Label>
+                      <Input
+                        id="description"
+                        value={newProject.description}
+                        onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+                        placeholder="프로젝트 설명을 입력하세요"
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                      <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                        취소
+                      </Button>
+                      <Button onClick={handleCreateProject}>
+                        생성
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </>
+        )}
+        
+        {isCollapsed && (
+          <div className="p-2 flex justify-center">
+            <FolderOpen className="h-5 w-5" />
+          </div>
+        )}
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>프로젝트 목록</SidebarGroupLabel>
+          {!isCollapsed && <SidebarGroupLabel>프로젝트 목록</SidebarGroupLabel>}
           <SidebarGroupContent>
             <SidebarMenu>
               {filteredProjects.map((project) => (
@@ -182,29 +192,36 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
                   <SidebarMenuButton 
                     onClick={() => onProjectSelect(project.id)}
                     isActive={selectedProject === project.id}
-                    className="flex flex-col items-start h-auto p-3 hover:bg-accent"
+                    className={isCollapsed ? "justify-center" : "flex flex-col items-start h-auto p-3 hover:bg-accent"}
+                    tooltip={isCollapsed ? project.name : undefined}
                   >
-                    <div className="flex items-center justify-between w-full mb-1">
-                      <span className="font-medium text-sm">{project.name}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground text-left line-clamp-2">
-                      {project.description}
-                    </p>
-                    <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Users className="h-3 w-3" />
-                        {project.memberCount}명
-                      </div>
-                      <div>
-                        {project.lastUpdated}
-                      </div>
-                    </div>
+                    {isCollapsed ? (
+                      <FolderOpen className="h-4 w-4" />
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between w-full mb-1">
+                          <span className="font-medium text-sm">{project.name}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground text-left line-clamp-2">
+                          {project.description}
+                        </p>
+                        <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Users className="h-3 w-3" />
+                            {project.memberCount}명
+                          </div>
+                          <div>
+                            {project.lastUpdated}
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
             
-            {filteredProjects.length === 0 && (
+            {!isCollapsed && filteredProjects.length === 0 && (
               <div className="text-center py-6">
                 <p className="text-muted-foreground text-sm">검색 결과가 없습니다.</p>
               </div>
