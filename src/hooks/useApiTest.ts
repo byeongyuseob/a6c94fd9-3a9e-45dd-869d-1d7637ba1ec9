@@ -3,7 +3,12 @@ import { useState } from "react";
 import type { ApiTestResponse } from "@/types/apiTest";
 import { useToast } from "@/hooks/use-toast";
 
-export function useApiTest(endpoint: string, headers: Record<string, string>, version: string, queryParams: Record<string, string>) {
+export function useApiTest(
+  endpoint: string,
+  headers: Record<string, string>,
+  version: string,
+  queryParams: Record<string, string>
+) {
   const { toast } = useToast();
   const [response, setResponse] = useState<ApiTestResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -26,23 +31,50 @@ export function useApiTest(endpoint: string, headers: Record<string, string>, ve
       if (endpoint.includes("permissions")) {
         mockData = {
           data: [
-            { id: "1", name: "김개발", role: "admin", email: "kim@example.com", employeeId: "EMP001", createdAt: "2024-01-15T09:00:00Z", lastLogin: "2024-06-14T14:30:00Z" },
-            { id: "2", name: "이디자인", role: "editor", email: "lee@example.com", employeeId: "EMP002", createdAt: "2024-01-20T10:15:00Z", lastLogin: "2024-06-13T16:45:00Z" }
+            {
+              id: "1",
+              name: "김개발",
+              role: "admin",
+              email: "kim@example.com",
+              employeeId: "EMP001",
+              createdAt: "2024-01-15T09:00:00Z",
+              lastLogin: "2024-06-14T14:30:00Z"
+            },
+            {
+              id: "2",
+              name: "이디자인",
+              role: "editor",
+              email: "lee@example.com",
+              employeeId: "EMP002",
+              createdAt: "2024-01-20T10:15:00Z",
+              lastLogin: "2024-06-13T16:45:00Z"
+            }
           ],
-          paging: { page: 1, limit: 10, total: 2, totalPages: 1 },
-          meta: { apiVersion: version, requestedAt: new Date().toISOString() }
+          paging: {
+            page: customParams.page ? Number(customParams.page) : 1,
+            limit: customParams.limit ? Number(customParams.limit) : 10,
+            total: 2,
+            totalPages: 1
+          },
+          meta: {
+            apiVersion: version,
+            requestedAt: new Date().toISOString()
+          }
         };
       } else {
         mockData = {
           data: {
             environments: {
-              dev: { application: { APP_VERSION: "1.0.0-dev", DEBUG_MODE: "true", LOG_LEVEL: "debug" } },
-              staging: { application: { APP_VERSION: "1.0.0-rc", DEBUG_MODE: "true", LOG_LEVEL: "info" } },
-              production: { application: { APP_VERSION: "1.0.0", DEBUG_MODE: "false", LOG_LEVEL: "info" } }
+              dev: { application: { appVersion: "1.0.0-dev", debugMode: "true", logLevel: "debug" } },
+              staging: { application: { appVersion: "1.0.0-rc", debugMode: "true", logLevel: "info" } },
+              production: { application: { appVersion: "1.0.0", debugMode: "false", logLevel: "info" } }
             },
             secrets: { count: 3, lastUpdated: "2024-06-10T12:00:00Z" }
           },
-          meta: { apiVersion: version, requestedAt: new Date().toISOString() }
+          meta: {
+            apiVersion: version,
+            requestedAt: new Date().toISOString()
+          }
         };
       }
       const mockResponse: ApiTestResponse = {

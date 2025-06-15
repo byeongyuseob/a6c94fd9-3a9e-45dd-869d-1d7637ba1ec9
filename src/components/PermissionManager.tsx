@@ -55,6 +55,7 @@ export const PermissionManager = ({ selectedProject }: PermissionManagerProps) =
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">권한 조회 API</h3>
         
+        {/* 전체 권한 목록 조회 */}
         <ApiTestPanel
           title="전체 권한 목록 조회"
           endpoint={`/api/v1/projects/${selectedProject}/permissions`}
@@ -68,6 +69,7 @@ export const PermissionManager = ({ selectedProject }: PermissionManagerProps) =
           version="v1"
         />
 
+        {/* 특정 사용자 권한 조회 */}
         <ApiTestPanel
           title="특정 사용자 권한 조회"
           endpoint={`/api/v1/projects/${selectedProject}/permissions/{userId}`}
@@ -78,9 +80,10 @@ export const PermissionManager = ({ selectedProject }: PermissionManagerProps) =
           version="v1"
         />
 
+        {/* 역할별 권한 조회 */}
         <ApiTestPanel
           title="역할별 권한 조회"
-          endpoint={`/api/v1/projects/${selectedProject}/permissions/by-role`}
+          endpoint={`/api/v1/projects/${selectedProject}/permissions/byRole`}
           description="역할별로 그룹화된 권한 목록을 조회합니다."
           queryParams={{
             roles: "admin,editor,viewer",
