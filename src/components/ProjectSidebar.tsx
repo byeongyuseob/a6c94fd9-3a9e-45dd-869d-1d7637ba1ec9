@@ -1,12 +1,14 @@
 
-import { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { FolderOpen, Search } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { FolderOpen } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarHeader } from "@/components/ui/sidebar";
 import { ProjectSidebarProjectList } from "@/components/ProjectSidebarProjectList";
 import { ProjectSidebarCreateDialog } from "@/components/ProjectSidebarCreateDialog";
+import { AdvancedSearch, SearchFilters } from "@/components/AdvancedSearch";
 import { SidebarSkeleton } from "@/components/LoadingStates";
 import { Project } from "@/types/project";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 interface ProjectSidebarProps {
   onProjectSelect: (projectId: string) => void;
@@ -17,9 +19,17 @@ export const ProjectSidebar = ({
   onProjectSelect,
   selectedProject,
 }: ProjectSidebarProps) => {
-  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [filters, setFilters] = useState<SearchFilters>({
+    query: '',
+    status: '',
+    memberCount: '',
+    dateRange: {},
+    tags: [],
+  });
+  
+  const { addNotification } = useNotifications();
 
   useEffect(() => {
     // 프로젝트 로딩 시뮬레이션
@@ -53,15 +63,99 @@ export const ProjectSidebar = ({
     return () => clearTimeout(timer);
   }, []);
 
-  const filteredProjects = projects.filter(
-    (project) =>
-      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // 필터링된 프로젝트 계산
+  const filteredProjects = useMemo(() => {
+    return projects.filter(project => {
+      // 검색어 필터
+      if (filters.query) {
+        const query = filters.query.toLowerCase();
+        const matchesQuery = 
+          project.name.toLowerCase().includes(query) ||
+          project.description.toLowerCase().includes(query);
+        if (!matchesQuery) return false;
+      }
+
+      // 상태 필터 (현재는 mock 데이터에 status가 없으므로 생략)
+      
+      // 멤버 수 필터
+      if (filters.memberCount) {
+        switch (filters.memberCount) {
+          case '1-5':
+            if (project.memberCount > 5) return false;
+            break;
+          case '6-10':
+            if (project.memberCount < 6 || project.memberCount > 10) return false;
+            break;
+          case '11-20':
+            if (project.memberCount < 11 || project.memberCount > 20) return false;
+            break;
+          case '20+':
+            if (project.memberCount < 20) return false;
+            break;
+        }
+      }
+
+      // 날짜 범위 필터
+      if (filters.dateRange.from || filters.dateRange.to) {
+        const projectDate = new Date(project.lastUpdated);
+        if (filters.dateRange.from && projectDate < filters.dateRange.from) return false;
+        if (filters.dateRange.to && projectDate > filters.dateRange.to) return false;
+      }
+
+      return true;
+    });
+  }, [projects, filters]);
 
   const handleCreateProject = (project: Project) => {
     setProjects([...projects, project]);
+    addNotification({
+      type: 'success',
+      title: '프로젝트 생성됨',
+      message: `${project.name} 프로젝트가 성공적으로 생성되었습니다.`,
+    });
   };
+
+  const handleFiltersChange = (newFilters: SearchFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      query: '',
+      status: '',
+      memberCount: '',
+      dateRange: {},
+      tags: [],
+    });
+  };
+
+  // 키보드 단축키 설정
+  useKeyboardShortcuts([
+    {
+      key: 'n',
+      ctrlKey: true,
+      callback: () => {
+        // 새 프로젝트 생성 대화상자 열기 (추후 구현)
+        console.log('새 프로젝트 생성 단축키');
+      },
+      description: '새 프로젝트 생성',
+    },
+    {
+      key: '1',
+      callback: () => projects[0] && onProjectSelect(projects[0].id),
+      description: '첫 번째 프로젝트 선택',
+    },
+    {
+      key: '2',
+      callback: () => projects[1] && onProjectSelect(projects[1].id),
+      description: '두 번째 프로젝트 선택',
+    },
+    {
+      key: '3',
+      callback: () => projects[2] && onProjectSelect(projects[2].id),
+      description: '세 번째 프로젝트 선택',
+    },
+  ]);
 
   return (
     <Sidebar
@@ -80,22 +174,16 @@ export const ProjectSidebar = ({
           </div>
           {!isLoading && projects.length > 0 && (
             <div className="text-xs text-muted-foreground bg-secondary px-2 py-1 rounded-full">
-              {projects.length}
+              {filteredProjects.length}/{projects.length}
             </div>
           )}
         </div>
         
         <div className="px-4 pb-4">
-          <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4 transition-colors group-focus-within:text-primary" />
-            <Input
-              placeholder="프로젝트 검색..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-background/50 border-border/50 focus:bg-background focus:border-primary/50 transition-all duration-200"
-              disabled={isLoading}
-            />
-          </div>
+          <AdvancedSearch 
+            onFiltersChange={handleFiltersChange}
+            onClearFilters={handleClearFilters}
+          />
         </div>
         
         <div className="px-4 pb-4">

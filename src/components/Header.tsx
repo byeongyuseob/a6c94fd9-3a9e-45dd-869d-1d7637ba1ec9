@@ -2,9 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useTheme } from "@/hooks/useTheme";
-import { Sun, Moon, Bell, Search, Settings } from "lucide-react";
+import { Sun, Moon, Settings } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
+import { NotificationPanel } from "@/components/NotificationPanel";
+import { KeyboardShortcutsHelp } from "@/components/KeyboardShortcutsHelp";
 import { Input } from "@/components/ui/input";
 
 interface HeaderProps {
@@ -29,14 +31,6 @@ export const Header = ({ selectedProject, currentSection }: HeaderProps) => {
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="hidden md:flex relative">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="검색..."
-            className="w-64 pl-8 bg-background/50 border-border/50 focus:bg-background"
-          />
-        </div>
-        
         <Button
           variant="ghost"
           size="icon"
@@ -51,11 +45,9 @@ export const Header = ({ selectedProject, currentSection }: HeaderProps) => {
           <span className="sr-only">테마 전환</span>
         </Button>
 
-        <Button variant="ghost" size="icon" className="h-8 w-8 relative">
-          <Bell className="h-4 w-4" />
-          <div className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full"></div>
-          <span className="sr-only">알림</span>
-        </Button>
+        <NotificationPanel />
+
+        <KeyboardShortcutsHelp />
 
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <Settings className="h-4 w-4" />
