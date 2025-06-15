@@ -20,6 +20,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Plus, Search, FolderOpen, Users, Folder } from "lucide-react";
@@ -110,9 +111,12 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
   return (
     <Sidebar variant="inset">
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-1">
-          <FolderOpen className="h-5 w-5" />
-          {!isCollapsed && <span className="font-semibold">프로젝트</span>}
+        <div className="flex items-center justify-between px-2 py-1">
+          <div className="flex items-center gap-2">
+            <FolderOpen className="h-5 w-5" />
+            {!isCollapsed && <span className="font-semibold">프로젝트</span>}
+          </div>
+          <SidebarTrigger className="h-8 w-8" />
         </div>
         
         {!isCollapsed && (

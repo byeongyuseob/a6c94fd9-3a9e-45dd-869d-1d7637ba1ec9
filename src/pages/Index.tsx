@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PermissionManager } from "@/components/PermissionManager";
 import { SettingsManager } from "@/components/SettingsManager";
 import { ProjectSidebar } from "@/components/ProjectSidebar";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { Settings, Users } from "lucide-react";
 
 const Index = () => {
@@ -19,10 +19,7 @@ const Index = () => {
         />
         
         <SidebarInset>
-          {/* 항상 보이는 헤더에 사이드바 트리거 */}
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-            <SidebarTrigger className="-ml-1" />
-            <div className="h-6 w-px bg-border" />
             <h1 className="text-lg font-semibold">프로젝트 관리 플랫폼</h1>
           </header>
 

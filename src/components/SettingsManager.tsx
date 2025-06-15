@@ -52,7 +52,7 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
       <Tabs defaultValue="docker" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="docker">환경 설정</TabsTrigger>
-          <TabsTrigger value="api-test">API 조회</TabsTrigger>
+          <TabsTrigger value="api-test">설정 조회</TabsTrigger>
         </TabsList>
 
         <TabsContent value="docker" className="mt-6">
@@ -61,51 +61,40 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
 
         <TabsContent value="api-test" className="mt-6">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">설정 조회 API</h3>
+            <h3 className="text-lg font-semibold">환경 설정 조회 API</h3>
             
             <ApiTestPanel
-              title="전체 프로젝트 설정 조회"
-              endpoint={`/api/v1/projects/${selectedProject}/settings`}
-              description="프로젝트의 모든 설정을 조회합니다."
+              title="개발 환경 설정 조회"
+              endpoint={`/api/v1/projects/${selectedProject}/settings/environments/dev`}
+              description="개발 환경의 설정 정보를 조회합니다."
               queryParams={{
-                include: "docker,general",
-                format: "json"
+                category: "application",
+                format: "json",
+                include_secrets: "false"
               }}
               version="v1"
             />
 
             <ApiTestPanel
-              title="Docker 환경 설정 조회"
-              endpoint={`/api/v1/projects/${selectedProject}/settings/docker`}
-              description="Docker 관련 환경 설정을 조회합니다."
+              title="스테이징 환경 설정 조회"
+              endpoint={`/api/v1/projects/${selectedProject}/settings/environments/staging`}
+              description="스테이징 환경의 설정 정보를 조회합니다."
               queryParams={{
-                environment: "dev",
-                category: "application"
+                category: "application",
+                format: "json",
+                include_secrets: "false"
               }}
               version="v1"
             />
 
             <ApiTestPanel
-              title="설정 변경 이력 조회"
-              endpoint={`/api/v1/projects/${selectedProject}/settings/audit-log`}
-              description="설정 변경 이력을 조회합니다."
+              title="프로덕션 환경 설정 조회"
+              endpoint={`/api/v1/projects/${selectedProject}/settings/environments/production`}
+              description="프로덕션 환경의 설정 정보를 조회합니다."
               queryParams={{
-                from: "2024-01-01",
-                to: "2024-12-31",
-                action: "",
-                user: ""
-              }}
-              version="v1"
-            />
-
-            <ApiTestPanel
-              title="환경별 설정 비교"
-              endpoint={`/api/v1/projects/${selectedProject}/settings/compare`}
-              description="서로 다른 환경의 설정을 비교합니다."
-              queryParams={{
-                source: "dev",
-                target: "prod",
-                category: "all"
+                category: "application",
+                format: "json",
+                include_secrets: "false"
               }}
               version="v1"
             />
