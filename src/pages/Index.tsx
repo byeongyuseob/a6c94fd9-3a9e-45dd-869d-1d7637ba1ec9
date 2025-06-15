@@ -11,8 +11,11 @@ const Index = () => {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
 
   return (
-    <SidebarProvider defaultOpen={true} style={{ "--sidebar-width": "20rem" }}>
-      <div className="min-h-screen flex w-full bg-secondary/40">
+    <SidebarProvider defaultOpen={true}>
+      <div
+        className="min-h-screen flex w-full bg-secondary/40"
+        style={{ "--sidebar-width": "20rem" } as React.CSSProperties}
+      >
         <ProjectSidebar 
           onProjectSelect={setSelectedProject}
           selectedProject={selectedProject}
