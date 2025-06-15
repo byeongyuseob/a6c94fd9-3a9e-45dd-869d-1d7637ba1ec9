@@ -37,9 +37,6 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
     role: permission.role,
   });
 
-  // Ensure the Select never receives an empty string as value
-  const safeRole = editedUser.role && editedUser.role !== "" ? editedUser.role : "operator";
-
   const handleEditUser = () => {
     if (!editedUser.employeeId.trim() || !editedUser.name.trim() || !editedUser.email.trim()) {
       toast({
@@ -55,8 +52,8 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
       employeeId: editedUser.employeeId,
       name: editedUser.name,
       email: editedUser.email,
-      role: safeRole,
-      permissions: getDefaultPermissions(safeRole),
+      role: editedUser.role,
+      permissions: getDefaultPermissions(editedUser.role),
     };
 
     onEditUser(updatedPermission);
@@ -111,9 +108,9 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
           <div>
             <Label htmlFor="edit-role">역할</Label>
             <Select
-              value={safeRole}
-              onValueChange={(value: any) =>
-                setEditedUser({ ...editedUser, role: value || "operator" })
+              value={editedUser.role}
+              onValueChange={(value: "operator" | "manager" | "supermanager" | "developer") =>
+                setEditedUser({ ...editedUser, role: value })
               }
             >
               <SelectTrigger aria-label="역할 선택">

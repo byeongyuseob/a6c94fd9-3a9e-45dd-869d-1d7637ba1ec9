@@ -36,9 +36,6 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
     role: "operator",
   });
 
-  // Ensure the Select never receives an empty string as value
-  const safeRole = newUser.role && newUser.role !== "" ? newUser.role : "operator";
-
   const handleAddUser = () => {
     if (!newUser.employeeId.trim() || !newUser.name.trim() || !newUser.email.trim()) {
       toast({
@@ -54,8 +51,8 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
       employeeId: newUser.employeeId,
       name: newUser.name,
       email: newUser.email,
-      role: safeRole,
-      permissions: getDefaultPermissions(safeRole),
+      role: newUser.role,
+      permissions: getDefaultPermissions(newUser.role),
       lastActive: new Date().toISOString().split('T')[0],
     };
 
@@ -113,9 +110,9 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
           <div>
             <Label htmlFor="role">역할</Label>
             <Select
-              value={safeRole}
-              onValueChange={(value: any) =>
-                setNewUser({ ...newUser, role: value || "operator" })
+              value={newUser.role}
+              onValueChange={(value: "operator" | "manager" | "supermanager" | "developer") =>
+                setNewUser({ ...newUser, role: value })
               }
             >
               <SelectTrigger aria-label="역할 선택">
