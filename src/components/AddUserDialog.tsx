@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -109,22 +108,24 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
           </div>
           <div>
             <Label htmlFor="role">역할</Label>
-            <Select
-              value={newUser.role}
-              onValueChange={(value: "operator" | "manager" | "supermanager" | "developer") =>
-                setNewUser({ ...newUser, role: value })
-              }
-            >
-              <SelectTrigger aria-label="역할 선택">
-                <SelectValue placeholder="역할 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="operator">운영자</SelectItem>
-                <SelectItem value="manager">매니저</SelectItem>
-                <SelectItem value="supermanager">슈퍼매니저</SelectItem>
-                <SelectItem value="developer">개발자</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select
+                value={newUser.role}
+                onValueChange={
+                  (value: "regular" | "contract" | "manager" | "supermanager" | "developer") =>
+                    setNewUser({ ...newUser, role: value })
+                }
+              >
+                <SelectTrigger aria-label="역할 선택">
+                  <SelectValue placeholder="Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="regular">Regular</SelectItem>
+                  <SelectItem value="contract">Contract</SelectItem>
+                  <SelectItem value="manager">Manager</SelectItem>
+                  <SelectItem value="supermanager">Supermanager</SelectItem>
+                  <SelectItem value="developer">Developer</SelectItem>
+                </SelectContent>
+              </Select>
           </div>
           <div className="flex justify-end space-x-2">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>

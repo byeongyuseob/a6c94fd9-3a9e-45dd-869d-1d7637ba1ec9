@@ -4,7 +4,7 @@ export interface Permission {
   employeeId: string;
   name: string;
   email: string;
-  role: "operator" | "manager" | "supermanager" | "developer";
+  role: "regular" | "contract" | "manager" | "supermanager" | "developer";
   permissions: {
     read: boolean;
     write: boolean;
@@ -18,5 +18,5 @@ export interface NewUser {
   employeeId: string;
   name: string;
   email: string;
-  role: "operator" | "manager" | "supermanager" | "developer";
+  role: "regular" | "contract" | "manager" | "supermanager" | "developer";
 }

@@ -109,18 +109,20 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
             <Label htmlFor="edit-role">역할</Label>
             <Select
               value={editedUser.role}
-              onValueChange={(value: "operator" | "manager" | "supermanager" | "developer") =>
-                setEditedUser({ ...editedUser, role: value })
+              onValueChange={
+                (value: "regular" | "contract" | "manager" | "supermanager" | "developer") =>
+                  setEditedUser({ ...editedUser, role: value })
               }
             >
               <SelectTrigger aria-label="역할 선택">
-                <SelectValue placeholder="역할 선택" />
+                <SelectValue placeholder="Role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="operator">운영자</SelectItem>
-                <SelectItem value="manager">매니저</SelectItem>
-                <SelectItem value="supermanager">슈퍼매니저</SelectItem>
-                <SelectItem value="developer">개발자</SelectItem>
+                <SelectItem value="regular">Regular</SelectItem>
+                <SelectItem value="contract">Contract</SelectItem>
+                <SelectItem value="manager">Manager</SelectItem>
+                <SelectItem value="supermanager">Supermanager</SelectItem>
+                <SelectItem value="developer">Developer</SelectItem>
               </SelectContent>
             </Select>
           </div>

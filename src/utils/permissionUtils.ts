@@ -7,8 +7,10 @@ export const getRoleColor = (role: string) => {
       return "bg-red-100 text-red-800";
     case "manager":
       return "bg-blue-100 text-blue-800";
-    case "operator":
+    case "regular":
       return "bg-green-100 text-green-800";
+    case "contract":
+      return "bg-yellow-100 text-yellow-800";
     default:
       return "bg-gray-100 text-gray-800";
   }
@@ -17,22 +19,24 @@ export const getRoleColor = (role: string) => {
 export const getRoleText = (role: string) => {
   switch (role) {
     case "developer":
-      return "개발자";
+      return "Developer";
     case "supermanager":
-      return "슈퍼매니저";
+      return "Supermanager";
     case "manager":
-      return "매니저";
-    case "operator":
-      return "운영자";
+      return "Manager";
+    case "regular":
+      return "Regular";
+    case "contract":
+      return "Contract";
     default:
-      return "알 수 없음";
+      return "Unknown";
   }
 };
 
-export const getDefaultPermissions = (role: "operator" | "manager" | "supermanager" | "developer") => {
+export const getDefaultPermissions = (role: "regular" | "contract" | "manager" | "supermanager" | "developer") => {
   return {
     read: true,
-    write: role !== "operator",
+    write: role === "manager" || role === "supermanager" || role === "developer",
     delete: role === "supermanager" || role === "developer",
     manage: role === "developer",
   };

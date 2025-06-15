@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import type { ApiTestResponse } from "@/types/apiTest";
 import { useToast } from "@/hooks/use-toast";
@@ -28,40 +27,117 @@ export function useApiTest(
 
     setTimeout(() => {
       let mockData, status = 200, statusText = "OK";
+      // 권한 API 처리
       if (endpoint.includes("permissions")) {
-        mockData = {
-          data: [
-            {
+        // 특정 사용자 권한 조회(프로필 상세)
+        if (endpoint.includes("{userId}") && customParams.include?.includes("profile")) {
+          mockData = {
+            data: {
               id: "1",
-              name: "김개발",
-              role: "admin",
-              email: "kim@example.com",
+              name: "Jung Regular",
+              role: "regular",
+              email: "kim.regular@example.com",
               employeeId: "EMP001",
+              profile: {
+                position: "Software Engineer",
+                department: "IT Dept.",
+                phone: "+82-10-1111-2222",
+                joinedAt: "2024-01-15",
+                address: "서울 강남구"
+              },
               createdAt: "2024-01-15T09:00:00Z",
               lastLogin: "2024-06-14T14:30:00Z"
             },
-            {
-              id: "2",
-              name: "이디자인",
-              role: "editor",
-              email: "lee@example.com",
-              employeeId: "EMP002",
-              createdAt: "2024-01-20T10:15:00Z",
-              lastLogin: "2024-06-13T16:45:00Z"
+            meta: {
+              apiVersion: version,
+              requestedAt: new Date().toISOString()
             }
-          ],
-          paging: {
-            page: customParams.page ? Number(customParams.page) : 1,
-            limit: customParams.limit ? Number(customParams.limit) : 10,
-            total: 2,
-            totalPages: 1
-          },
-          meta: {
-            apiVersion: version,
-            requestedAt: new Date().toISOString()
-          }
-        };
-      } else {
+          };
+        }
+        // 역할별 권한 조회
+        else if (endpoint.includes("byRole")) {
+          mockData = {
+            data: [
+              {
+                role: "regular",
+                count: 3,
+                members: [
+                  { id: "1", name: "Jung Regular", employeeId: "EMP001" }
+                ]
+              },
+              {
+                role: "contract",
+                count: 2,
+                members: [
+                  { id: "2", name: "Lee Contract", employeeId: "EMP002" }
+                ]
+              },
+              {
+                role: "manager",
+                count: 1,
+                members: [
+                  { id: "3", name: "Park Manager", employeeId: "EMP003" }
+                ]
+              },
+              {
+                role: "supermanager",
+                count: 1,
+                members: [
+                  { id: "4", name: "Choi Supermanager", employeeId: "EMP004" }
+                ]
+              },
+              {
+                role: "developer",
+                count: 2,
+                members: [
+                  { id: "5", name: "Jung Developer", employeeId: "EMP005" }
+                ]
+              }
+            ],
+            meta: {
+              apiVersion: version,
+              requestedAt: new Date().toISOString()
+            }
+          };
+        }
+        // 전체 권한 목록 조회 등
+        else {
+          mockData = {
+            data: [
+              {
+                id: "1",
+                name: "Jung Regular",
+                role: "regular",
+                email: "kim.regular@example.com",
+                employeeId: "EMP001",
+                createdAt: "2024-01-15T09:00:00Z",
+                lastLogin: "2024-06-14T14:30:00Z"
+              },
+              {
+                id: "2",
+                name: "Lee Contract",
+                role: "contract",
+                email: "lee.contract@example.com",
+                employeeId: "EMP002",
+                createdAt: "2024-01-21T09:00:00Z",
+                lastLogin: "2024-06-13T14:12:00Z"
+              }
+            ],
+            paging: {
+              page: customParams.page ? Number(customParams.page) : 1,
+              limit: customParams.limit ? Number(customParams.limit) : 10,
+              total: 2,
+              totalPages: 1
+            },
+            meta: {
+              apiVersion: version,
+              requestedAt: new Date().toISOString()
+            }
+          };
+        }
+      }
+      // ... keep existing code (else: secrets/env mock, etc) the same ...
+      else {
         mockData = {
           data: {
             environments: {
