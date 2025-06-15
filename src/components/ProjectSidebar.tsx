@@ -1,10 +1,8 @@
-
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { FolderOpen } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarHeader } from "@/components/ui/sidebar";
 import { ProjectSidebarProjectList } from "@/components/ProjectSidebarProjectList";
 import { ProjectSidebarCreateDialog } from "@/components/ProjectSidebarCreateDialog";
-import { AdvancedSearch, SearchFilters } from "@/components/AdvancedSearch";
 import { SidebarSkeleton } from "@/components/LoadingStates";
 import { Project } from "@/types/project";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -21,13 +19,6 @@ export const ProjectSidebar = ({
 }: ProjectSidebarProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [filters, setFilters] = useState<SearchFilters>({
-    query: '',
-    status: '',
-    memberCount: '',
-    dateRange: {},
-    tags: [],
-  });
 
   const { addNotification } = useNotifications();
 
@@ -63,47 +54,8 @@ export const ProjectSidebar = ({
     return () => clearTimeout(timer);
   }, []);
 
-  const filteredProjects = useMemo(() => {
-    return projects.filter(project => {
-      // 검색어 필터
-      if (filters.query) {
-        const query = filters.query.toLowerCase();
-        const matchesQuery =
-          project.name.toLowerCase().includes(query) ||
-          project.description.toLowerCase().includes(query);
-        if (!matchesQuery) return false;
-      }
-
-      // 상태 필터 (현재는 mock 데이터에 status가 없으므로 생략)
-
-      // 멤버 수 필터
-      if (filters.memberCount) {
-        switch (filters.memberCount) {
-          case '1-5':
-            if (project.memberCount > 5) return false;
-            break;
-          case '6-10':
-            if (project.memberCount < 6 || project.memberCount > 10) return false;
-            break;
-          case '11-20':
-            if (project.memberCount < 11 || project.memberCount > 20) return false;
-            break;
-          case '20+':
-            if (project.memberCount < 20) return false;
-            break;
-        }
-      }
-
-      // 날짜 범위 필터
-      if (filters.dateRange.from || filters.dateRange.to) {
-        const projectDate = new Date(project.lastUpdated);
-        if (filters.dateRange.from && projectDate < filters.dateRange.from) return false;
-        if (filters.dateRange.to && projectDate > filters.dateRange.to) return false;
-      }
-
-      return true;
-    });
-  }, [projects, filters]);
+  // filteredProjects: 전체 프로젝트를 항상 그대로 사용
+  const filteredProjects = projects;
 
   const handleCreateProject = useCallback((project: Project) => {
     setProjects(prev => [...prev, project]);
@@ -114,28 +66,11 @@ export const ProjectSidebar = ({
     });
   }, [addNotification]);
 
-  const handleFiltersChange = useCallback((newFilters: SearchFilters) => {
-    setFilters(newFilters);
-  }, []);
-
-  const handleClearFilters = useCallback(() => {
-    setFilters({
-      query: '',
-      status: '',
-      memberCount: '',
-      dateRange: {},
-      tags: [],
-    });
-  }, []);
-
-  // 키보드 단축키 및 ARIA 내비게이션 보강
   useKeyboardShortcuts([
     {
       key: 'n',
       ctrlKey: true,
       callback: () => {
-        // 새 프로젝트 생성 대화상자 열기 (추후 구현)
-        // 알림만 뜨게 설정
         addNotification({
           type: 'info',
           title: '단축키 안내',
@@ -180,16 +115,9 @@ export const ProjectSidebar = ({
           </div>
           {!isLoading && projects.length > 0 && (
             <div className="text-xs text-muted-foreground bg-secondary px-2 py-1 rounded-full">
-              {filteredProjects.length}/{projects.length}
+              {projects.length}/{projects.length}
             </div>
           )}
-        </div>
-        <div className="px-4 pb-4">
-          <AdvancedSearch
-            onFiltersChange={handleFiltersChange}
-            onClearFilters={handleClearFilters}
-            aria-label="프로젝트 고급 검색"
-          />
         </div>
         <div className="px-4 pb-4">
           <ProjectSidebarCreateDialog onCreate={handleCreateProject} />
@@ -202,7 +130,7 @@ export const ProjectSidebar = ({
         ) : (
           <ProjectSidebarProjectList
             projects={projects}
-            filteredProjects={filteredProjects}
+            filteredProjects={projects}
             selectedProject={selectedProject}
             isCollapsed={false}
             onProjectSelect={onProjectSelect}
