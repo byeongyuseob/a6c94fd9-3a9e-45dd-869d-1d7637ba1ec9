@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { FolderOpen, Search } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarHeader, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarHeader } from "@/components/ui/sidebar";
 import { ProjectSidebarProjectList } from "@/components/ProjectSidebarProjectList";
 import { ProjectSidebarCreateDialog } from "@/components/ProjectSidebarCreateDialog";
 import { Project } from "@/types/project";
@@ -11,8 +12,10 @@ interface ProjectSidebarProps {
   selectedProject: string | null;
 }
 
-export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSidebarProps) => {
-  const { state } = useSidebar();
+export const ProjectSidebar = ({
+  onProjectSelect,
+  selectedProject,
+}: ProjectSidebarProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [projects, setProjects] = useState<Project[]>([
     {
@@ -38,54 +41,44 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
     },
   ]);
 
-  const filteredProjects = projects.filter(project =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProjects = projects.filter(
+    (project) =>
+      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleCreateProject = (project: Project) => {
     setProjects([...projects, project]);
   };
 
-  const isCollapsed = state === "collapsed";
-
   return (
-    <Sidebar 
-      variant="inset" 
-      collapsible="icon"
-      className="!bg-sidebar/95 shadow-xl rounded-r-2xl border-r border-sidebar-border"
+    <Sidebar
+      variant="inset"
+      className="!bg-sidebar/95 shadow-xl rounded-r-2xl border-r border-sidebar-border w-72 min-w-[210px] max-w-[320px]"
     >
       <SidebarHeader>
         <div className="flex items-center justify-between p-3">
           <div className="flex items-center gap-2">
             <FolderOpen className="h-6 w-6 text-primary" />
-            {!isCollapsed && (
-              <span className="font-bold text-lg tracking-tight select-none text-sidebar-foreground">
-                프로젝트
-              </span>
-            )}
+            <span className="font-bold text-lg tracking-tight select-none text-sidebar-foreground">
+              프로젝트
+            </span>
           </div>
-          <SidebarTrigger className="h-8 w-8 flex-shrink-0" />
         </div>
-        
-        {!isCollapsed && (
-          <>
-            <div className="px-3 pt-1 pb-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  placeholder="프로젝트 검색..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 h-9 rounded-lg border-sidebar-border bg-sidebar-accent"
-                />
-              </div>
-            </div>
-            <div className="px-3 pb-2">
-              <ProjectSidebarCreateDialog onCreate={handleCreateProject} />
-            </div>
-          </>
-        )}
+        <div className="px-3 pt-1 pb-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="프로젝트 검색..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-9 rounded-lg border-sidebar-border bg-sidebar-accent"
+            />
+          </div>
+        </div>
+        <div className="px-3 pb-2">
+          <ProjectSidebarCreateDialog onCreate={handleCreateProject} />
+        </div>
       </SidebarHeader>
 
       <SidebarContent>
@@ -93,11 +86,10 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
           projects={projects}
           filteredProjects={filteredProjects}
           selectedProject={selectedProject}
-          isCollapsed={isCollapsed}
+          isCollapsed={false}
           onProjectSelect={onProjectSelect}
         />
       </SidebarContent>
     </Sidebar>
   );
 };
-// 리팩터링됨: 250줄 이상 컴포넌트를 제거/분리
