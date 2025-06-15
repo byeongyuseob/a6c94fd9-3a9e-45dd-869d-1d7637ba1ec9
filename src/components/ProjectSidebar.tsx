@@ -109,14 +109,14 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
   const isCollapsed = state === "collapsed";
 
   return (
-    <Sidebar variant="inset">
+    <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader>
-        <div className="flex items-center justify-between px-2 py-1">
+        <div className="flex items-center justify-between p-2">
           <div className="flex items-center gap-2">
-            <FolderOpen className="h-5 w-5" />
+            <FolderOpen className="h-5 w-5 flex-shrink-0" />
             {!isCollapsed && <span className="font-semibold">프로젝트</span>}
           </div>
-          <SidebarTrigger className="h-8 w-8" />
+          <SidebarTrigger className="h-8 w-8 flex-shrink-0" />
         </div>
         
         {!isCollapsed && (
@@ -192,7 +192,7 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
                     isActive={selectedProject === project.id}
                     tooltip={isCollapsed ? project.name : undefined}
                   >
-                    <Folder className="h-4 w-4" />
+                    <Folder className="h-4 w-4 flex-shrink-0" />
                     {!isCollapsed && (
                       <div className="flex flex-col items-start min-w-0 flex-1">
                         <span className="font-medium text-sm truncate w-full">{project.name}</span>

@@ -11,7 +11,7 @@ const Index = () => {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full">
         <ProjectSidebar 
           onProjectSelect={setSelectedProject}
