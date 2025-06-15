@@ -54,15 +54,15 @@ export const ProjectSidebar = ({
   return (
     <Sidebar
       variant="inset"
-      className="!bg-gradient-to-b from-slate-50 to-white border-r border-slate-200/80 w-80 min-w-[280px] max-w-[380px] flex-shrink-0 shadow-2xl backdrop-blur-xl"
+      className="bg-background border-r w-80 min-w-[280px] max-w-[380px] flex-shrink-0"
     >
-      <SidebarHeader className="border-b border-slate-200/50 bg-white/80 backdrop-blur-sm">
+      <SidebarHeader className="border-b">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
-              <FolderOpen className="h-5 w-5 text-white" />
+            <div className="p-2 bg-primary text-primary-foreground rounded-lg">
+              <FolderOpen className="h-5 w-5" />
             </div>
-            <span className="font-bold text-xl tracking-tight select-none bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+            <span className="font-bold text-lg tracking-tight">
               프로젝트
             </span>
           </div>
@@ -70,12 +70,12 @@ export const ProjectSidebar = ({
         
         <div className="px-4 pb-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               placeholder="프로젝트 검색..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-11 rounded-xl border-slate-200 bg-white/80 backdrop-blur-sm shadow-sm focus:shadow-md transition-all duration-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+              className="pl-10"
             />
           </div>
         </div>
@@ -85,7 +85,7 @@ export const ProjectSidebar = ({
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="bg-gradient-to-b from-white to-slate-50/50">
+      <SidebarContent>
         <ProjectSidebarProjectList
           projects={projects}
           filteredProjects={filteredProjects}
