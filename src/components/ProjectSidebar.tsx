@@ -1,10 +1,11 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { FolderOpen, Search, Plus } from "lucide-react";
+import { FolderOpen, Search } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarHeader } from "@/components/ui/sidebar";
 import { ProjectSidebarProjectList } from "@/components/ProjectSidebarProjectList";
 import { ProjectSidebarCreateDialog } from "@/components/ProjectSidebarCreateDialog";
+import { SidebarSkeleton } from "@/components/LoadingStates";
 import { Project } from "@/types/project";
 
 interface ProjectSidebarProps {
@@ -17,29 +18,40 @@ export const ProjectSidebar = ({
   selectedProject,
 }: ProjectSidebarProps) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [projects, setProjects] = useState<Project[]>([
-    {
-      id: "1",
-      name: "웹 애플리케이션",
-      description: "메인 웹 애플리케이션 프로젝트",
-      lastUpdated: "2024-06-15",
-      memberCount: 12,
-    },
-    {
-      id: "2",
-      name: "모바일 앱",
-      description: "iOS/Android 모바일 애플리케이션",
-      lastUpdated: "2024-06-14",
-      memberCount: 8,
-    },
-    {
-      id: "3",
-      name: "API 서버",
-      description: "백엔드 API 서버 프로젝트",
-      lastUpdated: "2024-06-13",
-      memberCount: 5,
-    },
-  ]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    // 프로젝트 로딩 시뮬레이션
+    const timer = setTimeout(() => {
+      setProjects([
+        {
+          id: "1",
+          name: "웹 애플리케이션",
+          description: "메인 웹 애플리케이션 프로젝트",
+          lastUpdated: "2024-06-15",
+          memberCount: 12,
+        },
+        {
+          id: "2",
+          name: "모바일 앱",
+          description: "iOS/Android 모바일 애플리케이션",
+          lastUpdated: "2024-06-14",
+          memberCount: 8,
+        },
+        {
+          id: "3",
+          name: "API 서버",
+          description: "백엔드 API 서버 프로젝트",
+          lastUpdated: "2024-06-13",
+          memberCount: 5,
+        },
+      ]);
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredProjects = projects.filter(
     (project) =>
@@ -66,7 +78,7 @@ export const ProjectSidebar = ({
               프로젝트
             </span>
           </div>
-          {projects.length > 0 && (
+          {!isLoading && projects.length > 0 && (
             <div className="text-xs text-muted-foreground bg-secondary px-2 py-1 rounded-full">
               {projects.length}
             </div>
@@ -81,6 +93,7 @@ export const ProjectSidebar = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 bg-background/50 border-border/50 focus:bg-background focus:border-primary/50 transition-all duration-200"
+              disabled={isLoading}
             />
           </div>
         </div>
@@ -91,13 +104,17 @@ export const ProjectSidebar = ({
       </SidebarHeader>
 
       <SidebarContent className="bg-background/40">
-        <ProjectSidebarProjectList
-          projects={projects}
-          filteredProjects={filteredProjects}
-          selectedProject={selectedProject}
-          isCollapsed={false}
-          onProjectSelect={onProjectSelect}
-        />
+        {isLoading ? (
+          <SidebarSkeleton />
+        ) : (
+          <ProjectSidebarProjectList
+            projects={projects}
+            filteredProjects={filteredProjects}
+            selectedProject={selectedProject}
+            isCollapsed={false}
+            onProjectSelect={onProjectSelect}
+          />
+        )}
       </SidebarContent>
     </Sidebar>
   );
