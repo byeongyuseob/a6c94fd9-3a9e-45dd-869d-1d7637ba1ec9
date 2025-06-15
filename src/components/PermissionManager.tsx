@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,10 +42,14 @@ interface PermissionManagerProps {
 export const PermissionManager = ({ selectedProject }: PermissionManagerProps) => {
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newUser, setNewUser] = useState({
+  const [newUser, setNewUser] = useState<{
+    name: string;
+    email: string;
+    role: "owner" | "admin" | "member" | "viewer";
+  }>({
     name: "",
     email: "",
-    role: "member" as const,
+    role: "member",
   });
 
   // 샘플 권한 데이터
