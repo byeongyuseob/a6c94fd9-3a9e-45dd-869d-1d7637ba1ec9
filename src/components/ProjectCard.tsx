@@ -49,23 +49,35 @@ export const ProjectCard = ({ project, isSelected, onSelect }: ProjectCardProps)
   return (
     <Card 
       className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-        isSelected ? "ring-2 ring-primary shadow-md" : ""
+        isSelected ? "ring-2 ring-primary shadow-md bg-primary/95" : ""
       }`}
       onClick={onSelect}
     >
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-semibold">{project.name}</CardTitle>
+          <CardTitle
+            className={`text-lg font-semibold transition-colors ${
+              isSelected ? "text-white" : "text-foreground"
+            }`}
+          >
+            {project.name}
+          </CardTitle>
           <Badge className={getStatusColor(project.status)}>
             {getStatusText(project.status)}
           </Badge>
         </div>
-        <p className="text-sm text-muted-foreground mt-2">
+        <p
+          className={`text-sm mt-2 transition-colors ${
+            isSelected ? "text-white/80" : "text-muted-foreground"
+          }`}
+        >
           {project.description}
         </p>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="flex justify-between items-center text-sm text-muted-foreground">
+        <div className={`flex justify-between items-center text-sm transition-colors ${
+          isSelected ? "text-white/80" : "text-muted-foreground"
+        }`}>
           <div className="flex items-center">
             <Users className="h-4 w-4 mr-1" />
             {project.memberCount}명
@@ -76,7 +88,7 @@ export const ProjectCard = ({ project, isSelected, onSelect }: ProjectCardProps)
           </div>
         </div>
         {isSelected && (
-          <Button className="w-full mt-4" size="sm">
+          <Button className="w-full mt-4 text-base-foreground bg-white/90 text-primary hover:bg-white">
             선택됨
           </Button>
         )}
@@ -84,3 +96,4 @@ export const ProjectCard = ({ project, isSelected, onSelect }: ProjectCardProps)
     </Card>
   );
 };
+

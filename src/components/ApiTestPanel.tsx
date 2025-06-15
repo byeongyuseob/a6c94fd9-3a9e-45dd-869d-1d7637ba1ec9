@@ -48,13 +48,12 @@ export const ApiTestPanel = ({
 
   const handleTest = async () => {
     setLoading(true);
-    
-    // 시뮬레이션된 응답
+
     setTimeout(() => {
-      const mockResponse = {
-        status: 200,
-        statusText: "OK",
-        data: endpoint.includes("permissions") ? {
+      // 구조 개선: 실제 RESTful 응답 구조와 유사하게.
+      let mockData, status = 200, statusText = "OK";
+      if (endpoint.includes("permissions")) {
+        mockData = {
           data: [
             { 
               id: "1", 
@@ -75,33 +74,40 @@ export const ApiTestPanel = ({
               lastLogin: "2024-06-13T16:45:00Z"
             }
           ],
-          pagination: {
-            total: 2,
+          paging: {
             page: 1,
             limit: 10,
+            total: 2,
             totalPages: 1
           },
           meta: {
-            version: version,
-            timestamp: new Date().toISOString()
+            apiVersion: version,
+            requestedAt: new Date().toISOString()
           }
-        } : {
+        };
+      } else {
+        mockData = {
           data: {
-            docker: {
-              environments: {
-                dev: { 
-                  application: { 
-                    APP_VERSION: "1.0.0-dev",
-                    DEBUG_MODE: "true",
-                    LOG_LEVEL: "debug"
-                  }
-                },
-                prod: {
-                  application: {
-                    APP_VERSION: "1.0.0",
-                    DEBUG_MODE: "false",
-                    LOG_LEVEL: "info"
-                  }
+            environments: {
+              dev: { 
+                application: { 
+                  APP_VERSION: "1.0.0-dev",
+                  DEBUG_MODE: "true",
+                  LOG_LEVEL: "debug"
+                }
+              },
+              staging: {
+                application: {
+                  APP_VERSION: "1.0.0-rc",
+                  DEBUG_MODE: "true",
+                  LOG_LEVEL: "info"
+                }
+              },
+              production: {
+                application: {
+                  APP_VERSION: "1.0.0",
+                  DEBUG_MODE: "false",
+                  LOG_LEVEL: "info"
                 }
               }
             },
@@ -111,10 +117,16 @@ export const ApiTestPanel = ({
             }
           },
           meta: {
-            version: version,
-            timestamp: new Date().toISOString()
+            apiVersion: version,
+            requestedAt: new Date().toISOString()
           }
-        },
+        };
+      }
+
+      const mockResponse = {
+        status,
+        statusText,
+        data: mockData,
         headers: {
           "content-type": "application/json",
           "x-request-id": "req_" + Math.random().toString(36).substr(2, 9),
@@ -122,10 +134,9 @@ export const ApiTestPanel = ({
           "x-ratelimit-remaining": "99"
         }
       };
-      
       setResponse(mockResponse);
       setLoading(false);
-      
+
       toast({
         title: "API 조회 완료",
         description: `GET ${buildUrl()} - 200 OK`,
