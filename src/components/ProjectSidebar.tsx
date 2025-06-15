@@ -109,34 +109,42 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
   const isCollapsed = state === "collapsed";
 
   return (
-    <Sidebar variant="inset" collapsible="icon">
+    <Sidebar 
+      variant="inset" 
+      collapsible="icon"
+      className="!bg-sidebar/95 shadow-xl rounded-r-2xl border-r border-sidebar-border"
+    >
       <SidebarHeader>
-        <div className="flex items-center justify-between p-2">
+        <div className="flex items-center justify-between p-3">
           <div className="flex items-center gap-2">
-            <FolderOpen className="h-5 w-5 flex-shrink-0" />
-            {!isCollapsed && <span className="font-semibold">프로젝트</span>}
+            <FolderOpen className="h-6 w-6 text-primary" />
+            {!isCollapsed && (
+              <span className="font-bold text-lg tracking-tight select-none text-sidebar-foreground">
+                프로젝트
+              </span>
+            )}
           </div>
           <SidebarTrigger className="h-8 w-8 flex-shrink-0" />
         </div>
         
         {!isCollapsed && (
           <>
-            <div className="px-2">
+            <div className="px-3 pt-1 pb-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
                   placeholder="프로젝트 검색..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 h-8"
+                  className="pl-10 h-9 rounded-lg border-sidebar-border bg-sidebar-accent/60 focus:ring-2 focus:ring-primary/30"
                 />
               </div>
             </div>
 
-            <div className="px-2">
+            <div className="px-3 pb-2">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" className="w-full">
+                  <Button size="sm" className="w-full rounded-xl flex items-center gap-2 font-medium shadow">
                     <Plus className="h-4 w-4 mr-2" />
                     새 프로젝트
                   </Button>
@@ -182,7 +190,11 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
 
       <SidebarContent>
         <SidebarGroup>
-          {!isCollapsed && <SidebarGroupLabel>프로젝트 목록</SidebarGroupLabel>}
+          {!isCollapsed && (
+            <SidebarGroupLabel className="text-xs tracking-wider font-bold text-muted-foreground pl-2">
+              프로젝트 목록
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
             <SidebarMenu>
               {filteredProjects.map((project) => (
@@ -191,11 +203,25 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
                     onClick={() => onProjectSelect(project.id)}
                     isActive={selectedProject === project.id}
                     tooltip={isCollapsed ? project.name : undefined}
+                    className={
+                      `transition-colors group relative
+                      ${selectedProject === project.id 
+                        ? "bg-primary/10 border-l-4 border-primary shadow-md" 
+                        : "hover:bg-accent/60"}
+                      rounded-xl px-2 py-2`
+                    }
                   >
-                    <Folder className="h-4 w-4 flex-shrink-0" />
+                    <Folder 
+                      className={`h-5 w-5 flex-shrink-0 
+                        ${selectedProject === project.id ? "text-primary" : "text-muted-foreground"}
+                        transition-colors`
+                      } 
+                    />
                     {!isCollapsed && (
-                      <div className="flex flex-col items-start min-w-0 flex-1">
-                        <span className="font-medium text-sm truncate w-full">{project.name}</span>
+                      <div className="flex flex-col items-start min-w-0 flex-1 ml-2">
+                        <span className="font-medium text-base truncate w-full">
+                          {project.name}
+                        </span>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Users className="h-3 w-3" />
@@ -204,6 +230,9 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
                           <span>•</span>
                           <span>{project.lastUpdated}</span>
                         </div>
+                        {selectedProject === project.id && (
+                          <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">선택됨</span>
+                        )}
                       </div>
                     )}
                   </SidebarMenuButton>
@@ -219,6 +248,10 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
     </Sidebar>
   );
 };
+
+// 프로젝트 사이드바 파일 길이가 250줄이 넘었습니다. 
+// 더 유지보수하기 쉽게 리팩터링을 원하시면 "리팩터링 해줘"라고 말씀해 주세요!
