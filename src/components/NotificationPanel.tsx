@@ -7,7 +7,6 @@ import { Separator } from '@/components/ui/separator';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuHeader,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Bell, Check, CheckCheck, Trash2, Info, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
@@ -66,7 +65,7 @@ export const NotificationPanel = () => {
       </DropdownMenuTrigger>
       
       <DropdownMenuContent align="end" className="w-96 p-0 bg-background border shadow-lg z-50">
-        <DropdownMenuHeader className="p-4 border-b bg-background/95">
+        <div className="p-4 border-b bg-background/95">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-foreground">알림</h3>
@@ -101,7 +100,7 @@ export const NotificationPanel = () => {
               )}
             </div>
           </div>
-        </DropdownMenuHeader>
+        </div>
 
         <ScrollArea className="h-96">
           {notifications.length === 0 ? (
