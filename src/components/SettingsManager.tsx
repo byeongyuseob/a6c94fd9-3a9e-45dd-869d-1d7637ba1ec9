@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectSettings, getProjectSettings } from "@/utils/mockData";
@@ -48,15 +47,7 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
         </Button>
       </div>
 
-      <Tabs defaultValue="docker" className="w-full">
-        <TabsList className="grid w-full grid-cols-1">
-          <TabsTrigger value="docker">Docker</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="docker">
-          <DockerSettingsManager settings={settings} onUpdateSettings={setSettings} />
-        </TabsContent>
-      </Tabs>
+      <DockerSettingsManager settings={settings} onUpdateSettings={setSettings} />
     </div>
   );
 };
