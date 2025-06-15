@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PermissionManager } from "@/components/PermissionManager";
@@ -10,6 +9,8 @@ import { Settings, Users, FolderOpen } from "lucide-react";
 import { PageLoader, TabContentSkeleton } from "@/components/LoadingStates";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useNotifications } from "@/contexts/NotificationContext";
+import { DashboardHeader } from "@/components/DashboardHeader";
+import { ProjectTabPanel } from "@/components/ProjectTabPanel";
 
 const Index = () => {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
@@ -112,84 +113,15 @@ const Index = () => {
           />
 
           <main className="flex flex-1 flex-col gap-6 p-4 md:p-6 animate-in" role="main">
-            <div className="mb-2">
-              <h2 className="text-2xl font-bold text-foreground mb-1 flex items-center gap-3">
-                <div className="p-1.5 bg-primary/10 text-primary rounded-lg">
-                  <FolderOpen className="h-5 w-5" />
-                </div>
-                대시보드
-              </h2>
-              <p className="text-muted-foreground">
-                {selectedProject
-                  ? "선택된 프로젝트의 권한과 설정을 관리하세요"
-                  : "시작하려면 왼쪽에서 프로젝트를 선택해주세요"
-                }
-              </p>
-            </div>
+            <DashboardHeader selectedProject={selectedProject} />
 
             {selectedProject ? (
-              <div className="bg-background/60 backdrop-blur-sm rounded-xl border shadow-soft animate-in">
-                <Tabs
-                  value={currentTab}
-                  className="w-full"
-                  onValueChange={handleTabChange}
-                  role="tablist"
-                  aria-label="관리 탭"
-                >
-                  <div className="border-b px-6 py-4 bg-background/40 rounded-t-xl">
-                    <TabsList className="bg-secondary/50 backdrop-blur-sm" aria-label="관리 탭 리스트">
-                      <TabsTrigger
-                        value="permissions"
-                        className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-soft"
-                        aria-label="권한 관리 탭"
-                        aria-selected={currentTab === "permissions"}
-                        tabIndex={0}
-                        role="tab"
-                      >
-                        <Users className="h-4 w-4" />
-                        <span className="hidden sm:inline">권한 관리</span>
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="settings"
-                        className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-soft"
-                        aria-label="설정 관리 탭"
-                        aria-selected={currentTab === "settings"}
-                        tabIndex={0}
-                        role="tab"
-                      >
-                        <Settings className="h-4 w-4" />
-                        <span className="hidden sm:inline">설정 관리</span>
-                      </TabsTrigger>
-                    </TabsList>
-                  </div>
-
-                  <TabsContent
-                    value="permissions"
-                    className="p-4 md:p-6 m-0 animate-in"
-                    role="tabpanel"
-                    aria-labelledby="권한 관리 탭"
-                  >
-                    {tabLoading ? (
-                      <TabContentSkeleton />
-                    ) : (
-                      <PermissionManager selectedProject={selectedProject} />
-                    )}
-                  </TabsContent>
-
-                  <TabsContent
-                    value="settings"
-                    className="p-4 md:p-6 m-0 animate-in"
-                    role="tabpanel"
-                    aria-labelledby="설정 관리 탭"
-                  >
-                    {tabLoading ? (
-                      <TabContentSkeleton />
-                    ) : (
-                      <SettingsManager selectedProject={selectedProject} />
-                    )}
-                  </TabsContent>
-                </Tabs>
-              </div>
+              <ProjectTabPanel
+                selectedProject={selectedProject}
+                currentTab={currentTab}
+                setCurrentTab={setCurrentTab}
+                setCurrentSection={setCurrentSection}
+              />
             ) : (
               <div className="flex flex-1 items-center justify-center p-4">
                 <div className="text-center rounded-xl border bg-background/60 backdrop-blur-sm p-8 md:p-12 max-w-md shadow-soft animate-in">
