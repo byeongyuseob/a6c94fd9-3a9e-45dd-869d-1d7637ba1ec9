@@ -54,34 +54,38 @@ export const ProjectSidebar = ({
   return (
     <Sidebar
       variant="inset"
-      className="!bg-sidebar/95 shadow-xl rounded-r-2xl border-r border-sidebar-border w-72 min-w-[210px] max-w-[320px] flex-shrink-0" // <-- 핵심: flex-shrink-0 추가
+      className="!bg-gradient-to-b from-slate-50 to-white border-r border-slate-200/80 w-80 min-w-[280px] max-w-[380px] flex-shrink-0 shadow-2xl backdrop-blur-xl"
     >
-      <SidebarHeader>
-        <div className="flex items-center justify-between p-3">
-          <div className="flex items-center gap-2">
-            <FolderOpen className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg tracking-tight select-none text-sidebar-foreground">
+      <SidebarHeader className="border-b border-slate-200/50 bg-white/80 backdrop-blur-sm">
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
+              <FolderOpen className="h-5 w-5 text-white" />
+            </div>
+            <span className="font-bold text-xl tracking-tight select-none bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
               프로젝트
             </span>
           </div>
         </div>
-        <div className="px-3 pt-1 pb-2">
+        
+        <div className="px-4 pb-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
             <Input
               placeholder="프로젝트 검색..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-9 rounded-lg border-sidebar-border bg-sidebar-accent"
+              className="pl-10 h-11 rounded-xl border-slate-200 bg-white/80 backdrop-blur-sm shadow-sm focus:shadow-md transition-all duration-200 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
             />
           </div>
         </div>
-        <div className="px-3 pb-2">
+        
+        <div className="px-4 pb-4">
           <ProjectSidebarCreateDialog onCreate={handleCreateProject} />
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="bg-gradient-to-b from-white to-slate-50/50">
         <ProjectSidebarProjectList
           projects={projects}
           filteredProjects={filteredProjects}
