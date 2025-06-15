@@ -54,7 +54,7 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="docker">환경 설정</TabsTrigger>
           <TabsTrigger value="secrets">시크릿 관리</TabsTrigger>
-          <TabsTrigger value="api-test">API 테스트</TabsTrigger>
+          <TabsTrigger value="api-test">API 조회</TabsTrigger>
         </TabsList>
 
         <TabsContent value="docker" className="mt-6">
@@ -67,61 +67,65 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
 
         <TabsContent value="api-test" className="mt-6">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">설정 관리 API 테스트</h3>
+            <h3 className="text-lg font-semibold">설정 조회 API</h3>
             
             <ApiTestPanel
-              title="프로젝트 설정 조회 API"
-              endpoint={`/api/projects/${selectedProject}/settings`}
-              method="GET"
+              title="전체 프로젝트 설정 조회"
+              endpoint={`/api/v1/projects/${selectedProject}/settings`}
               description="프로젝트의 모든 설정을 조회합니다."
-            />
-
-            <ApiTestPanel
-              title="환경 설정 업데이트 API"
-              endpoint={`/api/projects/${selectedProject}/settings/docker`}
-              method="PUT"
-              body={{
-                environments: {
-                  dev: {
-                    application: {
-                      APP_VERSION: "1.0.0-dev",
-                      DEBUG_MODE: "true",
-                      LOG_LEVEL: "debug"
-                    },
-                    api: {
-                      API_URL: "http://localhost:8080/api",
-                      API_KEY: "dev_api_key"
-                    },
-                    database: {
-                      DB_HOST: "localhost",
-                      DB_PORT: "5432",
-                      DB_NAME: "myapp_dev",
-                      DB_USERNAME: "dev_user",
-                      DB_PASSWORD: "dev_password"
-                    }
-                  }
-                }
+              queryParams={{
+                include: "docker,secrets,general",
+                format: "json"
               }}
-              description="Docker 환경 설정을 업데이트합니다."
+              version="v1"
             />
 
             <ApiTestPanel
-              title="시크릿 키 추가 API"
-              endpoint={`/api/projects/${selectedProject}/settings/secrets`}
-              method="POST"
-              body={{
-                name: "NEW_API_KEY",
-                key: "sk-1234567890abcdef",
-                description: "새로운 API 키"
+              title="Docker 환경 설정 조회"
+              endpoint={`/api/v1/projects/${selectedProject}/settings/docker`}
+              description="Docker 관련 환경 설정을 조회합니다."
+              queryParams={{
+                environment: "dev",
+                category: "application"
               }}
-              description="새로운 시크릿 키를 추가합니다."
+              version="v1"
             />
 
             <ApiTestPanel
-              title="시크릿 키 삭제 API"
-              endpoint={`/api/projects/${selectedProject}/settings/secrets/{keyId}`}
-              method="DELETE"
-              description="기존 시크릿 키를 삭제합니다."
+              title="시크릿 키 목록 조회"
+              endpoint={`/api/v1/projects/${selectedProject}/settings/secrets`}
+              description="등록된 시크릿 키 목록을 조회합니다. (값은 마스킹됨)"
+              queryParams={{
+                type: "api_key",
+                status: "active",
+                search: ""
+              }}
+              version="v1"
+            />
+
+            <ApiTestPanel
+              title="설정 변경 이력 조회"
+              endpoint={`/api/v1/projects/${selectedProject}/settings/audit-log`}
+              description="설정 변경 이력을 조회합니다."
+              queryParams={{
+                from: "2024-01-01",
+                to: "2024-12-31",
+                action: "",
+                user: ""
+              }}
+              version="v1"
+            />
+
+            <ApiTestPanel
+              title="환경별 설정 비교"
+              endpoint={`/api/v1/projects/${selectedProject}/settings/compare`}
+              description="서로 다른 환경의 설정을 비교합니다."
+              queryParams={{
+                source: "dev",
+                target: "prod",
+                category: "all"
+              }}
+              version="v1"
             />
           </div>
         </TabsContent>

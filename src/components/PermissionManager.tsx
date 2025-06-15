@@ -53,43 +53,53 @@ export const PermissionManager = ({ selectedProject }: PermissionManagerProps) =
 
       {/* API Test Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">API 테스트</h3>
+        <h3 className="text-lg font-semibold">권한 조회 API</h3>
         
         <ApiTestPanel
-          title="권한 목록 조회 API"
-          endpoint={`/api/projects/${selectedProject}/permissions`}
-          method="GET"
+          title="전체 권한 목록 조회"
+          endpoint={`/api/v1/projects/${selectedProject}/permissions`}
           description="프로젝트의 모든 사용자 권한을 조회합니다."
-        />
-
-        <ApiTestPanel
-          title="사용자 권한 추가 API"
-          endpoint={`/api/projects/${selectedProject}/permissions`}
-          method="POST"
-          body={{
-            name: "새 사용자",
-            email: "newuser@example.com",
-            employeeId: "EMP001",
-            role: "viewer"
+          queryParams={{
+            page: "1",
+            limit: "10",
+            role: "",
+            search: ""
           }}
-          description="프로젝트에 새로운 사용자 권한을 추가합니다."
+          version="v1"
         />
 
         <ApiTestPanel
-          title="사용자 권한 수정 API"
-          endpoint={`/api/projects/${selectedProject}/permissions/{permissionId}`}
-          method="PUT"
-          body={{
-            role: "editor"
+          title="특정 사용자 권한 조회"
+          endpoint={`/api/v1/projects/${selectedProject}/permissions/{userId}`}
+          description="특정 사용자의 상세 권한 정보를 조회합니다."
+          queryParams={{
+            include: "profile,lastLogin"
           }}
-          description="기존 사용자의 권한을 수정합니다."
+          version="v1"
         />
 
         <ApiTestPanel
-          title="사용자 권한 삭제 API"
-          endpoint={`/api/projects/${selectedProject}/permissions/{permissionId}`}
-          method="DELETE"
-          description="사용자 권한을 삭제합니다."
+          title="역할별 권한 조회"
+          endpoint={`/api/v1/projects/${selectedProject}/permissions/by-role`}
+          description="역할별로 그룹화된 권한 목록을 조회합니다."
+          queryParams={{
+            roles: "admin,editor,viewer",
+            includeCount: "true"
+          }}
+          version="v1"
+        />
+
+        <ApiTestPanel
+          title="권한 이력 조회"
+          endpoint={`/api/v1/projects/${selectedProject}/permissions/history`}
+          description="권한 변경 이력을 조회합니다."
+          queryParams={{
+            from: "2024-01-01",
+            to: "2024-12-31",
+            action: "",
+            userId: ""
+          }}
+          version="v1"
         />
       </div>
     </div>
