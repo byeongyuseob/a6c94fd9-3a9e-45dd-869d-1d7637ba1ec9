@@ -1,12 +1,9 @@
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Settings, Save, CheckCircle } from "lucide-react";
+import { Settings, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectSettings, getProjectSettings } from "@/utils/mockData";
-import { DockerSettingsManager } from "@/components/DockerSettingsManager";
 import { ApiTestPanel } from "@/components/ApiTestPanel";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface SettingsManagerProps {
   selectedProject: string | null;
@@ -16,7 +13,6 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
   const { toast } = useToast();
   const [settings, setSettings] = useState<ProjectSettings | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (selectedProject) {
@@ -28,32 +24,6 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
       }, 300);
     }
   }, [selectedProject]);
-
-  const handleSave = async () => {
-    if (!settings) return;
-    
-    setIsSaving(true);
-    
-    try {
-      // 실제 저장 로직 시뮬레이션
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "설정 저장 완료",
-        description: "프로젝트 설정이 성공적으로 저장되었습니다.",
-        duration: 3000,
-      });
-    } catch (error) {
-      toast({
-        title: "저장 실패",
-        description: "설정 저장 중 오류가 발생했습니다. 다시 시도해주세요.",
-        variant: "destructive",
-        duration: 5000,
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
 
   if (!selectedProject) {
     return (
@@ -102,115 +72,66 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
     );
   }
 
+  // 환경 정보 배열
+  const environments = [
+    {
+      key: "dev",
+      label: "Development",
+      description: "개발 환경의 설정 정보를 조회합니다.",
+      endpoint: `/api/v1/projects/${selectedProject}/settings/environments/dev`,
+    },
+    {
+      key: "staging",
+      label: "Staging",
+      description: "스테이징 환경의 설정 정보를 조회합니다.",
+      endpoint: `/api/v1/projects/${selectedProject}/settings/environments/staging`,
+    },
+    {
+      key: "production",
+      label: "Production",
+      description: "프로덕션 환경의 설정 정보를 조회합니다.",
+      endpoint: `/api/v1/projects/${selectedProject}/settings/environments/production`,
+    },
+  ];
+
   return (
-    <div className="space-y-6 animate-in">
+    <div className="space-y-8 animate-in">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-3">
             <div className="p-2 bg-primary/10 text-primary rounded-lg">
               <Settings className="h-5 w-5" />
             </div>
-            프로젝트 설정
+            환경별 API 설정 조회
           </h2>
           <p className="text-muted-foreground mt-1">
-            환경 설정 및 API 조회 관리
+            개발, 스테이징, 프로덕션 환경별로 API 설정을 바로 조회할 수 있습니다.
           </p>
         </div>
-        <Button 
-          onClick={handleSave} 
-          disabled={isSaving}
-          className="flex items-center gap-2 shadow-soft hover:shadow-medium transition-all duration-200"
-        >
-          {isSaving ? (
-            <>
-              <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin"></div>
-              저장 중...
-            </>
-          ) : (
-            <>
-              <Save className="h-4 w-4" />
-              설정 저장
-            </>
-          )}
-        </Button>
       </div>
 
-      <Tabs defaultValue="docker" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 h-12 bg-secondary/50 backdrop-blur-sm">
-          <TabsTrigger 
-            value="docker" 
-            className="h-full data-[state=active]:bg-background data-[state=active]:shadow-soft transition-all duration-200"
-          >
-            <Settings className="h-4 w-4 mr-2" />
-            환경 설정
-          </TabsTrigger>
-          <TabsTrigger 
-            value="api-test" 
-            className="h-full data-[state=active]:bg-background data-[state=active]:shadow-soft transition-all duration-200"
-          >
-            <CheckCircle className="h-4 w-4 mr-2" />
-            설정 조회
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="docker" className="mt-6 min-h-[500px] animate-in">
-          <div className="bg-background/50 backdrop-blur-sm rounded-xl border p-6 shadow-soft">
-            <DockerSettingsManager settings={settings} onUpdateSettings={setSettings} />
+      <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-3">
+        {environments.map((env) => (
+          <div key={env.key} className="bg-background/50 backdrop-blur-sm rounded-xl border p-6 shadow-soft flex flex-col gap-2">
+            <h3 className="text-lg font-semibold flex items-center gap-2 mb-2">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              {env.label}
+            </h3>
+            <p className="text-muted-foreground text-sm mb-2">{env.description}</p>
+            <ApiTestPanel
+              title={`${env.label} 환경 설정 조회`}
+              endpoint={env.endpoint}
+              description={env.description}
+              queryParams={{
+                category: "application",
+                format: "json",
+                include_secrets: "false"
+              }}
+              version="v1"
+            />
           </div>
-        </TabsContent>
-
-        <TabsContent value="api-test" className="mt-6 min-h-[500px] animate-in">
-          <div className="space-y-6">
-            <div className="bg-background/50 backdrop-blur-sm rounded-xl border p-6 shadow-soft">
-              <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
-                <CheckCircle className="h-5 w-5 text-primary" />
-                환경 설정 조회 API
-              </h3>
-              <p className="text-muted-foreground text-sm mb-6">
-                각 환경별 설정 정보를 조회하고 테스트할 수 있습니다.
-              </p>
-            
-              <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
-                <ApiTestPanel
-                  title="개발 환경 설정 조회"
-                  endpoint={`/api/v1/projects/${selectedProject}/settings/environments/dev`}
-                  description="개발 환경의 설정 정보를 조회합니다."
-                  queryParams={{
-                    category: "application",
-                    format: "json",
-                    include_secrets: "false"
-                  }}
-                  version="v1"
-                />
-
-                <ApiTestPanel
-                  title="스테이징 환경 설정 조회"
-                  endpoint={`/api/v1/projects/${selectedProject}/settings/environments/staging`}
-                  description="스테이징 환경의 설정 정보를 조회합니다."
-                  queryParams={{
-                    category: "application",
-                    format: "json",
-                    include_secrets: "false"
-                  }}
-                  version="v1"
-                />
-
-                <ApiTestPanel
-                  title="프로덕션 환경 설정 조회"
-                  endpoint={`/api/v1/projects/${selectedProject}/settings/environments/production`}
-                  description="프로덕션 환경의 설정 정보를 조회합니다."
-                  queryParams={{
-                    category: "application",
-                    format: "json",
-                    include_secrets: "false"
-                  }}
-                  version="v1"
-                />
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+        ))}
+      </div>
     </div>
   );
 };
