@@ -35,25 +35,25 @@ export const ProjectSidebarProjectList = ({
               onClick={() => onProjectSelect(project.id)}
               isActive={selectedProject === project.id}
               tooltip={undefined}
-              className={`h-auto items-start rounded-lg p-3 border
+              className={`h-auto items-start rounded-lg p-3 border transition-all duration-200
                 ${
                   selectedProject === project.id
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-accent hover:text-accent-foreground bg-background"
+                    ? "bg-primary/10 text-foreground border-primary/20 shadow-sm"
+                    : "hover:bg-accent hover:text-accent-foreground bg-background border-border"
                 }`}
             >
-              <div className={`p-2 rounded-lg flex-shrink-0
+              <div className={`p-2 rounded-lg flex-shrink-0 transition-colors duration-200
                 ${
                   selectedProject === project.id
-                    ? "bg-primary-foreground/20"
+                    ? "bg-primary/20"
                     : "bg-secondary"
                 }`}
               >
                 <Folder
-                  className={`h-4 w-4
+                  className={`h-4 w-4 transition-colors duration-200
                     ${
                       selectedProject === project.id
-                        ? "text-primary-foreground"
+                        ? "text-primary"
                         : "text-secondary-foreground"
                     }`}
                 />
@@ -61,9 +61,9 @@ export const ProjectSidebarProjectList = ({
               
               <div className="flex flex-col items-start min-w-0 flex-1 ml-3">
                 <span
-                  className={`font-semibold text-sm truncate w-full ${
+                  className={`font-semibold text-sm truncate w-full transition-colors duration-200 ${
                     selectedProject === project.id
-                      ? "text-primary-foreground"
+                      ? "text-primary"
                       : "text-foreground"
                   }`}
                 >
@@ -71,9 +71,9 @@ export const ProjectSidebarProjectList = ({
                 </span>
                 
                 <p
-                  className={`text-xs mt-1 line-clamp-2 ${
+                  className={`text-xs mt-1 line-clamp-2 transition-colors duration-200 ${
                     selectedProject === project.id
-                      ? "text-primary-foreground/80"
+                      ? "text-foreground/70"
                       : "text-muted-foreground"
                   }`}
                 >
@@ -81,9 +81,9 @@ export const ProjectSidebarProjectList = ({
                 </p>
                 
                 <div
-                  className={`flex items-center gap-3 text-xs mt-2 ${
+                  className={`flex items-center gap-3 text-xs mt-2 transition-colors duration-200 ${
                     selectedProject === project.id
-                      ? "text-primary-foreground/70"
+                      ? "text-foreground/60"
                       : "text-muted-foreground"
                   }`}
                 >

@@ -50,16 +50,16 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
       </div>
 
       <Tabs defaultValue="docker" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="docker">환경 설정</TabsTrigger>
-          <TabsTrigger value="api-test">설정 조회</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 h-10">
+          <TabsTrigger value="docker" className="h-full">환경 설정</TabsTrigger>
+          <TabsTrigger value="api-test" className="h-full">설정 조회</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="docker" className="mt-6">
+        <TabsContent value="docker" className="mt-6 min-h-[400px]">
           <DockerSettingsManager settings={settings} onUpdateSettings={setSettings} />
         </TabsContent>
 
-        <TabsContent value="api-test" className="mt-6">
+        <TabsContent value="api-test" className="mt-6 min-h-[400px]">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">환경 설정 조회 API</h3>
             
