@@ -1,4 +1,3 @@
-
 import { Permission } from "@/types/permission";
 
 export const getProjectPermissions = (projectId: string): Permission[] => {
@@ -98,11 +97,31 @@ export interface ProjectSettings {
     securityAlerts: boolean;
   };
   docker: {
-    apiUrl: string;
-    apiKey: string;
-    dbUrl: string;
-    dbId: string;
-    dbPassword: string;
+    apiUrl?: string;
+    apiKey?: string;
+    dbUrl?: string;
+    dbId?: string;
+    dbPassword?: string;
+    environments?: {
+      dev: {
+        application: { APP_VERSION: string; DEBUG_MODE: string; LOG_LEVEL: string; };
+        api: { API_URL: string; API_KEY: string; };
+        database: { DB_HOST: string; DB_PORT: string; DB_NAME: string; DB_USERNAME: string; DB_PASSWORD: string; };
+        custom: { [key: string]: string; };
+      };
+      staging: {
+        application: { APP_VERSION: string; DEBUG_MODE: string; LOG_LEVEL: string; };
+        api: { API_URL: string; API_KEY: string; };
+        database: { DB_HOST: string; DB_PORT: string; DB_NAME: string; DB_USERNAME: string; DB_PASSWORD: string; };
+        custom: { [key: string]: string; };
+      };
+      prod: {
+        application: { APP_VERSION: string; DEBUG_MODE: string; LOG_LEVEL: string; };
+        api: { API_URL: string; API_KEY: string; };
+        database: { DB_HOST: string; DB_PORT: string; DB_NAME: string; DB_USERNAME: string; DB_PASSWORD: string; };
+        custom: { [key: string]: string; };
+      };
+    };
   };
 }
 
@@ -132,11 +151,33 @@ export const getProjectSettings = (projectId: string): ProjectSettings => {
         securityAlerts: true,
       },
       docker: {
+        // Legacy fields for backward compatibility
         apiUrl: "http://localhost:8080/api",
         apiKey: "webapp_api_key_2024",
         dbUrl: "postgresql://localhost:5432/webapp",
         dbId: "webapp_user",
         dbPassword: "webapp_secure_pass",
+        // New environment-specific configurations
+        environments: {
+          dev: {
+            application: { APP_VERSION: '1.0.0-dev', DEBUG_MODE: 'true', LOG_LEVEL: 'debug' },
+            api: { API_URL: 'http://localhost:8080/api', API_KEY: 'dev_webapp_key' },
+            database: { DB_HOST: 'localhost', DB_PORT: '5432', DB_NAME: 'webapp_dev', DB_USERNAME: 'dev_user', DB_PASSWORD: 'dev_pass' },
+            custom: { REDIS_URL: 'redis://localhost:6379', MAIL_SERVICE: 'development' }
+          },
+          staging: {
+            application: { APP_VERSION: '1.0.0-rc', DEBUG_MODE: 'false', LOG_LEVEL: 'info' },
+            api: { API_URL: 'https://staging-api.webapp.com/api', API_KEY: 'staging_webapp_key' },
+            database: { DB_HOST: 'staging-db.webapp.com', DB_PORT: '5432', DB_NAME: 'webapp_staging', DB_USERNAME: 'staging_user', DB_PASSWORD: 'staging_pass' },
+            custom: { REDIS_URL: 'redis://staging-redis.webapp.com:6379', MAIL_SERVICE: 'sendgrid' }
+          },
+          prod: {
+            application: { APP_VERSION: '1.0.0', DEBUG_MODE: 'false', LOG_LEVEL: 'error' },
+            api: { API_URL: 'https://api.webapp.com/api', API_KEY: 'prod_webapp_key' },
+            database: { DB_HOST: 'prod-db.webapp.com', DB_PORT: '5432', DB_NAME: 'webapp_prod', DB_USERNAME: 'prod_user', DB_PASSWORD: 'prod_pass' },
+            custom: { REDIS_URL: 'redis://prod-redis.webapp.com:6379', MAIL_SERVICE: 'sendgrid', CDN_URL: 'https://cdn.webapp.com' }
+          }
+        }
       },
     },
     "2": {
@@ -168,6 +209,26 @@ export const getProjectSettings = (projectId: string): ProjectSettings => {
         dbUrl: "mongodb://localhost:27017/mobileapp",
         dbId: "mobile_user",
         dbPassword: "mobile_secure_pass",
+        environments: {
+          dev: {
+            application: { APP_VERSION: '2.0.0-dev', DEBUG_MODE: 'true', LOG_LEVEL: 'debug' },
+            api: { API_URL: 'http://localhost:9090/api', API_KEY: 'dev_mobile_key' },
+            database: { DB_HOST: 'localhost', DB_PORT: '27017', DB_NAME: 'mobileapp_dev', DB_USERNAME: 'dev_mobile', DB_PASSWORD: 'dev_mobile_pass' },
+            custom: { PUSH_SERVICE: 'development', ANALYTICS_ENABLED: 'false' }
+          },
+          staging: {
+            application: { APP_VERSION: '2.0.0-beta', DEBUG_MODE: 'false', LOG_LEVEL: 'info' },
+            api: { API_URL: 'https://staging-mobile-api.com/api', API_KEY: 'staging_mobile_key' },
+            database: { DB_HOST: 'staging-mongo.mobile.com', DB_PORT: '27017', DB_NAME: 'mobileapp_staging', DB_USERNAME: 'staging_mobile', DB_PASSWORD: 'staging_mobile_pass' },
+            custom: { PUSH_SERVICE: 'firebase', ANALYTICS_ENABLED: 'true' }
+          },
+          prod: {
+            application: { APP_VERSION: '2.0.0', DEBUG_MODE: 'false', LOG_LEVEL: 'error' },
+            api: { API_URL: 'https://mobile-api.com/api', API_KEY: 'prod_mobile_key' },
+            database: { DB_HOST: 'prod-mongo.mobile.com', DB_PORT: '27017', DB_NAME: 'mobileapp_prod', DB_USERNAME: 'prod_mobile', DB_PASSWORD: 'prod_mobile_pass' },
+            custom: { PUSH_SERVICE: 'firebase', ANALYTICS_ENABLED: 'true', CRASH_REPORTING: 'enabled' }
+          }
+        }
       },
     },
     "3": {
@@ -199,6 +260,26 @@ export const getProjectSettings = (projectId: string): ProjectSettings => {
         dbUrl: "postgresql://localhost:5432/api_db",
         dbId: "api_admin",
         dbPassword: "api_ultra_secure_pass",
+        environments: {
+          dev: {
+            application: { APP_VERSION: '3.0.0-dev', DEBUG_MODE: 'true', LOG_LEVEL: 'debug' },
+            api: { API_URL: 'http://localhost:3000/api', API_KEY: 'dev_api_server_key' },
+            database: { DB_HOST: 'localhost', DB_PORT: '5432', DB_NAME: 'api_dev', DB_USERNAME: 'dev_api', DB_PASSWORD: 'dev_api_pass' },
+            custom: { JWT_SECRET: 'dev_jwt_secret_key', RATE_LIMIT: '100' }
+          },
+          staging: {
+            application: { APP_VERSION: '3.0.0-rc', DEBUG_MODE: 'false', LOG_LEVEL: 'info' },
+            api: { API_URL: 'https://staging-api-server.com/api', API_KEY: 'staging_api_server_key' },
+            database: { DB_HOST: 'staging-postgres.api.com', DB_PORT: '5432', DB_NAME: 'api_staging', DB_USERNAME: 'staging_api', DB_PASSWORD: 'staging_api_pass' },
+            custom: { JWT_SECRET: 'staging_jwt_secret_key', RATE_LIMIT: '500', CORS_ORIGIN: 'https://staging.example.com' }
+          },
+          prod: {
+            application: { APP_VERSION: '3.0.0', DEBUG_MODE: 'false', LOG_LEVEL: 'error' },
+            api: { API_URL: 'https://api-server.com/api', API_KEY: 'prod_api_server_key' },
+            database: { DB_HOST: 'prod-postgres.api.com', DB_PORT: '5432', DB_NAME: 'api_prod', DB_USERNAME: 'prod_api', DB_PASSWORD: 'prod_api_pass' },
+            custom: { JWT_SECRET: 'prod_jwt_secret_ultra_secure', RATE_LIMIT: '1000', CORS_ORIGIN: 'https://example.com', MONITORING_ENABLED: 'true' }
+          }
+        }
       },
     },
   };

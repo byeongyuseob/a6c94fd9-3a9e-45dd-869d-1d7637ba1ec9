@@ -1,9 +1,12 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Server, Database, Key } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Server, Database, Settings, Plus, Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { ProjectSettings } from "@/utils/mockData";
 
 interface DockerSettingsManagerProps {
@@ -11,98 +14,336 @@ interface DockerSettingsManagerProps {
   onUpdateSettings: (settings: ProjectSettings) => void;
 }
 
+interface EnvironmentConfig {
+  application: {
+    APP_VERSION: string;
+    DEBUG_MODE: string;
+    LOG_LEVEL: string;
+  };
+  api: {
+    API_URL: string;
+    API_KEY: string;
+  };
+  database: {
+    DB_HOST: string;
+    DB_PORT: string;
+    DB_NAME: string;
+    DB_USERNAME: string;
+    DB_PASSWORD: string;
+  };
+  custom: { [key: string]: string };
+}
+
 export const DockerSettingsManager = ({ settings, onUpdateSettings }: DockerSettingsManagerProps) => {
-  const updateDockerConfig = (key: string, value: string) => {
+  const { toast } = useToast();
+  const [activeEnvironment, setActiveEnvironment] = useState<'dev' | 'staging' | 'prod'>('dev');
+  const [newCustomKey, setNewCustomKey] = useState('');
+  const [newCustomValue, setNewCustomValue] = useState('');
+
+  // Initialize environment configs if they don't exist
+  const initializeEnvironments = () => {
+    if (!settings.docker.environments) {
+      return {
+        dev: {
+          application: { APP_VERSION: '1.0.0-dev', DEBUG_MODE: 'true', LOG_LEVEL: 'debug' },
+          api: { API_URL: 'http://localhost:8080/api', API_KEY: 'dev_api_key' },
+          database: { DB_HOST: 'localhost', DB_PORT: '5432', DB_NAME: 'myapp_dev', DB_USERNAME: 'dev_user', DB_PASSWORD: 'dev_password' },
+          custom: {}
+        },
+        staging: {
+          application: { APP_VERSION: '1.0.0-rc', DEBUG_MODE: 'false', LOG_LEVEL: 'info' },
+          api: { API_URL: 'https://staging-api.example.com/api', API_KEY: 'staging_api_key' },
+          database: { DB_HOST: 'staging-db.example.com', DB_PORT: '5432', DB_NAME: 'myapp_staging', DB_USERNAME: 'staging_user', DB_PASSWORD: 'staging_password' },
+          custom: {}
+        },
+        prod: {
+          application: { APP_VERSION: '1.0.0', DEBUG_MODE: 'false', LOG_LEVEL: 'error' },
+          api: { API_URL: 'https://api.example.com/api', API_KEY: 'prod_api_key' },
+          database: { DB_HOST: 'prod-db.example.com', DB_PORT: '5432', DB_NAME: 'myapp_prod', DB_USERNAME: 'prod_user', DB_PASSWORD: 'prod_password' },
+          custom: {}
+        }
+      };
+    }
+    return settings.docker.environments;
+  };
+
+  const environments = initializeEnvironments();
+
+  const updateEnvironmentConfig = (env: 'dev' | 'staging' | 'prod', section: string, key: string, value: string) => {
+    const updatedEnvironments = {
+      ...environments,
+      [env]: {
+        ...environments[env],
+        [section]: {
+          ...environments[env][section as keyof EnvironmentConfig],
+          [key]: value
+        }
+      }
+    };
+
     onUpdateSettings({
       ...settings,
       docker: {
         ...settings.docker,
-        [key]: value,
-      },
+        environments: updatedEnvironments
+      }
     });
+  };
+
+  const addCustomVariable = () => {
+    if (!newCustomKey.trim() || !newCustomValue.trim()) {
+      toast({
+        title: "오류",
+        description: "키와 값을 모두 입력해주세요.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    updateEnvironmentConfig(activeEnvironment, 'custom', newCustomKey.trim(), newCustomValue.trim());
+    setNewCustomKey('');
+    setNewCustomValue('');
+    
+    toast({
+      title: "추가됨",
+      description: "사용자 정의 환경변수가 추가되었습니다.",
+    });
+  };
+
+  const removeCustomVariable = (key: string) => {
+    const updatedCustom = { ...environments[activeEnvironment].custom };
+    delete updatedCustom[key];
+
+    const updatedEnvironments = {
+      ...environments,
+      [activeEnvironment]: {
+        ...environments[activeEnvironment],
+        custom: updatedCustom
+      }
+    };
+
+    onUpdateSettings({
+      ...settings,
+      docker: {
+        ...settings.docker,
+        environments: updatedEnvironments
+      }
+    });
+
+    toast({
+      title: "삭제됨",
+      description: "환경변수가 삭제되었습니다.",
+    });
+  };
+
+  const renderEnvironmentSettings = (env: 'dev' | 'staging' | 'prod') => {
+    const config = environments[env];
+
+    return (
+      <div className="space-y-6">
+        {/* Application Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Application 설정
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor={`${env}-app-version`}>APP_VERSION</Label>
+              <Input
+                id={`${env}-app-version`}
+                value={config.application.APP_VERSION}
+                onChange={(e) => updateEnvironmentConfig(env, 'application', 'APP_VERSION', e.target.value)}
+                placeholder="1.0.0"
+              />
+            </div>
+            <div>
+              <Label htmlFor={`${env}-debug-mode`}>DEBUG_MODE</Label>
+              <Input
+                id={`${env}-debug-mode`}
+                value={config.application.DEBUG_MODE}
+                onChange={(e) => updateEnvironmentConfig(env, 'application', 'DEBUG_MODE', e.target.value)}
+                placeholder="true/false"
+              />
+            </div>
+            <div>
+              <Label htmlFor={`${env}-log-level`}>LOG_LEVEL</Label>
+              <Input
+                id={`${env}-log-level`}
+                value={config.application.LOG_LEVEL}
+                onChange={(e) => updateEnvironmentConfig(env, 'application', 'LOG_LEVEL', e.target.value)}
+                placeholder="debug/info/warn/error"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* API Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Server className="h-5 w-5" />
+              API 설정
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor={`${env}-api-url`}>API_URL</Label>
+              <Input
+                id={`${env}-api-url`}
+                value={config.api.API_URL}
+                onChange={(e) => updateEnvironmentConfig(env, 'api', 'API_URL', e.target.value)}
+                placeholder="http://localhost:8080/api"
+              />
+            </div>
+            <div>
+              <Label htmlFor={`${env}-api-key`}>API_KEY</Label>
+              <Input
+                id={`${env}-api-key`}
+                type="password"
+                value={config.api.API_KEY}
+                onChange={(e) => updateEnvironmentConfig(env, 'api', 'API_KEY', e.target.value)}
+                placeholder="your-api-key"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Database Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              DB 설정
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor={`${env}-db-host`}>DB_HOST</Label>
+              <Input
+                id={`${env}-db-host`}
+                value={config.database.DB_HOST}
+                onChange={(e) => updateEnvironmentConfig(env, 'database', 'DB_HOST', e.target.value)}
+                placeholder="localhost"
+              />
+            </div>
+            <div>
+              <Label htmlFor={`${env}-db-port`}>DB_PORT</Label>
+              <Input
+                id={`${env}-db-port`}
+                value={config.database.DB_PORT}
+                onChange={(e) => updateEnvironmentConfig(env, 'database', 'DB_PORT', e.target.value)}
+                placeholder="5432"
+              />
+            </div>
+            <div>
+              <Label htmlFor={`${env}-db-name`}>DB_NAME</Label>
+              <Input
+                id={`${env}-db-name`}
+                value={config.database.DB_NAME}
+                onChange={(e) => updateEnvironmentConfig(env, 'database', 'DB_NAME', e.target.value)}
+                placeholder="myapp"
+              />
+            </div>
+            <div>
+              <Label htmlFor={`${env}-db-username`}>DB_USERNAME</Label>
+              <Input
+                id={`${env}-db-username`}
+                value={config.database.DB_USERNAME}
+                onChange={(e) => updateEnvironmentConfig(env, 'database', 'DB_USERNAME', e.target.value)}
+                placeholder="postgres"
+              />
+            </div>
+            <div>
+              <Label htmlFor={`${env}-db-password`}>DB_PASSWORD</Label>
+              <Input
+                id={`${env}-db-password`}
+                type="password"
+                value={config.database.DB_PASSWORD}
+                onChange={(e) => updateEnvironmentConfig(env, 'database', 'DB_PASSWORD', e.target.value)}
+                placeholder="password"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Custom Environment Variables */}
+        <Card>
+          <CardHeader>
+            <CardTitle>사용자 정의 환경변수</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Add new custom variable */}
+            <div className="flex gap-2">
+              <Input
+                placeholder="변수명 (예: CUSTOM_CONFIG)"
+                value={newCustomKey}
+                onChange={(e) => setNewCustomKey(e.target.value)}
+              />
+              <Input
+                placeholder="값"
+                value={newCustomValue}
+                onChange={(e) => setNewCustomValue(e.target.value)}
+              />
+              <Button onClick={addCustomVariable} size="icon">
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Display existing custom variables */}
+            {Object.entries(config.custom).map(([key, value]) => (
+              <div key={key} className="flex gap-2 items-center">
+                <Input value={key} disabled className="bg-muted" />
+                <Input
+                  value={value}
+                  onChange={(e) => updateEnvironmentConfig(env, 'custom', key, e.target.value)}
+                />
+                <Button 
+                  onClick={() => removeCustomVariable(key)} 
+                  size="icon" 
+                  variant="destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    );
   };
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Server className="h-5 w-5" />
-            API 서버 설정
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="api-url">API URL</Label>
-            <Input
-              id="api-url"
-              value={settings.docker?.apiUrl || ''}
-              onChange={(e) => updateDockerConfig('apiUrl', e.target.value)}
-              placeholder="http://localhost:8080/api"
-            />
-          </div>
-          <div>
-            <Label htmlFor="api-key">API KEY</Label>
-            <Input
-              id="api-key"
-              type="password"
-              value={settings.docker?.apiKey || ''}
-              onChange={(e) => updateDockerConfig('apiKey', e.target.value)}
-              placeholder="your-api-key-here"
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs value={activeEnvironment} onValueChange={(value) => setActiveEnvironment(value as 'dev' | 'staging' | 'prod')}>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="dev">Development</TabsTrigger>
+          <TabsTrigger value="staging">Staging</TabsTrigger>
+          <TabsTrigger value="prod">Production</TabsTrigger>
+        </TabsList>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Database className="h-5 w-5" />
-            데이터베이스 설정
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="db-url">DB URL</Label>
-            <Input
-              id="db-url"
-              value={settings.docker?.dbUrl || ''}
-              onChange={(e) => updateDockerConfig('dbUrl', e.target.value)}
-              placeholder="postgresql://localhost:5432"
-            />
-          </div>
-          <div>
-            <Label htmlFor="db-id">DB ID (사용자명)</Label>
-            <Input
-              id="db-id"
-              value={settings.docker?.dbId || ''}
-              onChange={(e) => updateDockerConfig('dbId', e.target.value)}
-              placeholder="postgres"
-            />
-          </div>
-          <div>
-            <Label htmlFor="db-pw">DB PW (비밀번호)</Label>
-            <Input
-              id="db-pw"
-              type="password"
-              value={settings.docker?.dbPassword || ''}
-              onChange={(e) => updateDockerConfig('dbPassword', e.target.value)}
-              placeholder="your-database-password"
-            />
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="dev">
+          {renderEnvironmentSettings('dev')}
+        </TabsContent>
 
+        <TabsContent value="staging">
+          {renderEnvironmentSettings('staging')}
+        </TabsContent>
+
+        <TabsContent value="prod">
+          {renderEnvironmentSettings('prod')}
+        </TabsContent>
+      </Tabs>
+
+      {/* Docker Compose Preview */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Key className="h-5 w-5" />
-            Docker Compose 환경변수
-          </CardTitle>
+          <CardTitle>Docker Compose 미리보기 ({activeEnvironment.toUpperCase()})</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent>
           <div className="p-4 bg-muted rounded-lg">
-            <h4 className="font-medium mb-2">docker-compose.yml 예시:</h4>
             <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
 {`version: '3.8'
 services:
@@ -111,22 +352,32 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - API_URL=${settings.docker?.apiUrl || 'http://localhost:8080/api'}
-      - API_KEY=${settings.docker?.apiKey || 'your-api-key'}
-      - DB_URL=${settings.docker?.dbUrl || 'postgresql://localhost:5432'}
-      - DB_USER=${settings.docker?.dbId || 'postgres'}
-      - DB_PASSWORD=${settings.docker?.dbPassword || 'password'}
+      # Application Settings
+      - APP_VERSION=${environments[activeEnvironment].application.APP_VERSION}
+      - DEBUG_MODE=${environments[activeEnvironment].application.DEBUG_MODE}
+      - LOG_LEVEL=${environments[activeEnvironment].application.LOG_LEVEL}
+      
+      # API Settings
+      - API_URL=${environments[activeEnvironment].api.API_URL}
+      - API_KEY=${environments[activeEnvironment].api.API_KEY}
+      
+      # Database Settings
+      - DB_HOST=${environments[activeEnvironment].database.DB_HOST}
+      - DB_PORT=${environments[activeEnvironment].database.DB_PORT}
+      - DB_NAME=${environments[activeEnvironment].database.DB_NAME}
+      - DB_USERNAME=${environments[activeEnvironment].database.DB_USERNAME}
+      - DB_PASSWORD=${environments[activeEnvironment].database.DB_PASSWORD}${Object.entries(environments[activeEnvironment].custom).length > 0 ? '\n      \n      # Custom Variables' : ''}${Object.entries(environments[activeEnvironment].custom).map(([key, value]) => `\n      - ${key}=${value}`).join('')}
     depends_on:
       - postgres
   
   postgres:
     image: postgres:15
     environment:
-      - POSTGRES_DB=mydb
-      - POSTGRES_USER=${settings.docker?.dbId || 'postgres'}
-      - POSTGRES_PASSWORD=${settings.docker?.dbPassword || 'password'}
+      - POSTGRES_DB=${environments[activeEnvironment].database.DB_NAME}
+      - POSTGRES_USER=${environments[activeEnvironment].database.DB_USERNAME}
+      - POSTGRES_PASSWORD=${environments[activeEnvironment].database.DB_PASSWORD}
     ports:
-      - "5432:5432"
+      - "${environments[activeEnvironment].database.DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
