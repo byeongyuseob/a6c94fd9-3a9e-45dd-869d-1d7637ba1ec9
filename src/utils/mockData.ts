@@ -97,6 +97,13 @@ export interface ProjectSettings {
     weeklyReports: boolean;
     securityAlerts: boolean;
   };
+  docker: {
+    apiUrl: string;
+    apiKey: string;
+    dbUrl: string;
+    dbId: string;
+    dbPassword: string;
+  };
 }
 
 export const getProjectSettings = (projectId: string): ProjectSettings => {
@@ -124,6 +131,13 @@ export const getProjectSettings = (projectId: string): ProjectSettings => {
         weeklyReports: true,
         securityAlerts: true,
       },
+      docker: {
+        apiUrl: "http://localhost:8080/api",
+        apiKey: "webapp_api_key_2024",
+        dbUrl: "postgresql://localhost:5432/webapp",
+        dbId: "webapp_user",
+        dbPassword: "webapp_secure_pass",
+      },
     },
     "2": {
       general: {
@@ -148,6 +162,13 @@ export const getProjectSettings = (projectId: string): ProjectSettings => {
         weeklyReports: false,
         securityAlerts: true,
       },
+      docker: {
+        apiUrl: "http://localhost:9090/api",
+        apiKey: "mobile_api_key_2024",
+        dbUrl: "mongodb://localhost:27017/mobileapp",
+        dbId: "mobile_user",
+        dbPassword: "mobile_secure_pass",
+      },
     },
     "3": {
       general: {
@@ -171,6 +192,13 @@ export const getProjectSettings = (projectId: string): ProjectSettings => {
         pushNotifications: false,
         weeklyReports: true,
         securityAlerts: true,
+      },
+      docker: {
+        apiUrl: "http://localhost:3000/api",
+        apiKey: "api_server_key_2024",
+        dbUrl: "postgresql://localhost:5432/api_db",
+        dbId: "api_admin",
+        dbPassword: "api_ultra_secure_pass",
       },
     },
   };

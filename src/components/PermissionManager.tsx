@@ -23,6 +23,16 @@ export const PermissionManager = ({ selectedProject }: PermissionManagerProps) =
     setPermissions([...permissions, permission]);
   };
 
+  const handleEditUser = (updatedPermission: Permission) => {
+    setPermissions(permissions.map(p => 
+      p.id === updatedPermission.id ? updatedPermission : p
+    ));
+  };
+
+  const handleDeleteUser = (permissionId: string) => {
+    setPermissions(permissions.filter(p => p.id !== permissionId));
+  };
+
   if (!selectedProject) {
     return <PermissionEmptyState />;
   }
@@ -34,7 +44,11 @@ export const PermissionManager = ({ selectedProject }: PermissionManagerProps) =
         <AddUserDialog onAddUser={handleAddUser} />
       </div>
 
-      <PermissionCard permissions={permissions} />
+      <PermissionCard 
+        permissions={permissions} 
+        onEditUser={handleEditUser}
+        onDeleteUser={handleDeleteUser}
+      />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { ProjectSettings, getProjectSettings } from "@/utils/mockData";
 import { SecretKeysManager } from "@/components/SecretKeysManager";
 import { GeneralSettingsManager } from "@/components/GeneralSettingsManager";
 import { NotificationsManager } from "@/components/NotificationsManager";
+import { DockerSettingsManager } from "@/components/DockerSettingsManager";
 
 interface SettingsManagerProps {
   selectedProject: string | null;
@@ -50,12 +51,17 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
         </Button>
       </div>
 
-      <Tabs defaultValue="secrets" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+      <Tabs defaultValue="docker" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="docker">Docker</TabsTrigger>
           <TabsTrigger value="secrets">시크릿 키</TabsTrigger>
           <TabsTrigger value="general">일반</TabsTrigger>
           <TabsTrigger value="notifications">알림</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="docker">
+          <DockerSettingsManager settings={settings} onUpdateSettings={setSettings} />
+        </TabsContent>
 
         <TabsContent value="secrets">
           <SecretKeysManager settings={settings} onUpdateSettings={setSettings} />
