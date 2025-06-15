@@ -5,7 +5,6 @@ import { Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectSettings, getProjectSettings } from "@/utils/mockData";
 import { DockerSettingsManager } from "@/components/DockerSettingsManager";
-import { SecretKeysManager } from "@/components/SecretKeysManager";
 import { ApiTestPanel } from "@/components/ApiTestPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -51,18 +50,13 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
       </div>
 
       <Tabs defaultValue="docker" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="docker">환경 설정</TabsTrigger>
-          <TabsTrigger value="secrets">시크릿 관리</TabsTrigger>
           <TabsTrigger value="api-test">API 조회</TabsTrigger>
         </TabsList>
 
         <TabsContent value="docker" className="mt-6">
           <DockerSettingsManager settings={settings} onUpdateSettings={setSettings} />
-        </TabsContent>
-
-        <TabsContent value="secrets" className="mt-6">
-          <SecretKeysManager settings={settings} onUpdateSettings={setSettings} />
         </TabsContent>
 
         <TabsContent value="api-test" className="mt-6">
@@ -74,7 +68,7 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
               endpoint={`/api/v1/projects/${selectedProject}/settings`}
               description="프로젝트의 모든 설정을 조회합니다."
               queryParams={{
-                include: "docker,secrets,general",
+                include: "docker,general",
                 format: "json"
               }}
               version="v1"
@@ -87,18 +81,6 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
               queryParams={{
                 environment: "dev",
                 category: "application"
-              }}
-              version="v1"
-            />
-
-            <ApiTestPanel
-              title="시크릿 키 목록 조회"
-              endpoint={`/api/v1/projects/${selectedProject}/settings/secrets`}
-              description="등록된 시크릿 키 목록을 조회합니다. (값은 마스킹됨)"
-              queryParams={{
-                type: "api_key",
-                status: "active",
-                search: ""
               }}
               version="v1"
             />

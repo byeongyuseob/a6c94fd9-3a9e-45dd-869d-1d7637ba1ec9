@@ -24,13 +24,11 @@ import {
 } from "@/components/ui/sidebar";
 import { Plus, Search, FolderOpen, Users, Settings as SettingsIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Badge } from "@/components/ui/badge";
 
 interface Project {
   id: string;
   name: string;
   description: string;
-  status: "active" | "inactive" | "maintenance";
   lastUpdated: string;
   memberCount: number;
 }
@@ -54,7 +52,6 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
       id: "1",
       name: "웹 애플리케이션",
       description: "메인 웹 애플리케이션 프로젝트",
-      status: "active",
       lastUpdated: "2024-06-15",
       memberCount: 12,
     },
@@ -62,7 +59,6 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
       id: "2",
       name: "모바일 앱",
       description: "iOS/Android 모바일 애플리케이션",
-      status: "active",
       lastUpdated: "2024-06-14",
       memberCount: 8,
     },
@@ -70,7 +66,6 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
       id: "3",
       name: "API 서버",
       description: "백엔드 API 서버 프로젝트",
-      status: "maintenance",
       lastUpdated: "2024-06-13",
       memberCount: 5,
     },
@@ -95,7 +90,6 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
       id: Date.now().toString(),
       name: newProject.name,
       description: newProject.description,
-      status: "active",
       lastUpdated: new Date().toISOString().split('T')[0],
       memberCount: 1,
     };
@@ -108,26 +102,6 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
       title: "성공",
       description: "새 프로젝트가 생성되었습니다.",
     });
-  };
-
-  const getStatusBadge = (status: string) => {
-    const statusColors = {
-      active: "bg-green-500",
-      inactive: "bg-gray-500",
-      maintenance: "bg-yellow-500",
-    };
-    
-    const statusLabels = {
-      active: "활성",
-      inactive: "비활성",
-      maintenance: "유지보수",
-    };
-
-    return (
-      <Badge className={`${statusColors[status as keyof typeof statusColors]} text-white text-xs`}>
-        {statusLabels[status as keyof typeof statusLabels]}
-      </Badge>
-    );
   };
 
   return (
@@ -212,7 +186,6 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
                   >
                     <div className="flex items-center justify-between w-full mb-1">
                       <span className="font-medium text-sm">{project.name}</span>
-                      {getStatusBadge(project.status)}
                     </div>
                     <p className="text-xs text-muted-foreground text-left line-clamp-2">
                       {project.description}

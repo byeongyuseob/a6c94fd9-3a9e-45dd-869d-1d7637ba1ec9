@@ -88,19 +88,6 @@ export const PermissionManager = ({ selectedProject }: PermissionManagerProps) =
           }}
           version="v1"
         />
-
-        <ApiTestPanel
-          title="권한 이력 조회"
-          endpoint={`/api/v1/projects/${selectedProject}/permissions/history`}
-          description="권한 변경 이력을 조회합니다."
-          queryParams={{
-            from: "2024-01-01",
-            to: "2024-12-31",
-            action: "",
-            userId: ""
-          }}
-          version="v1"
-        />
       </div>
     </div>
   );

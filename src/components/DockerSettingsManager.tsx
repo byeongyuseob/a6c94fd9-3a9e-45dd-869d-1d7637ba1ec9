@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Server, Database, Settings, Plus, Trash2 } from "lucide-react";
+import { Server, Database, Settings, Plus, Trash2, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectSettings } from "@/utils/mockData";
 
@@ -38,6 +39,7 @@ export const DockerSettingsManager = ({ settings, onUpdateSettings }: DockerSett
   const [activeEnvironment, setActiveEnvironment] = useState<'dev' | 'staging' | 'prod'>('dev');
   const [newCustomKey, setNewCustomKey] = useState('');
   const [newCustomValue, setNewCustomValue] = useState('');
+  const [visibleSecrets, setVisibleSecrets] = useState<{[key: string]: boolean}>({});
 
   // Initialize environment configs if they don't exist
   const initializeEnvironments = () => {
@@ -135,6 +137,49 @@ export const DockerSettingsManager = ({ settings, onUpdateSettings }: DockerSett
     });
   };
 
+  const toggleSecretVisibility = (fieldKey: string) => {
+    setVisibleSecrets(prev => ({
+      ...prev,
+      [fieldKey]: !prev[fieldKey]
+    }));
+  };
+
+  const isSecretField = (key: string) => {
+    const secretFields = ['API_KEY', 'DB_PASSWORD'];
+    return secretFields.includes(key) || key.toLowerCase().includes('password') || key.toLowerCase().includes('key') || key.toLowerCase().includes('secret');
+  };
+
+  const renderSecretInput = (env: 'dev' | 'staging' | 'prod', section: string, key: string, value: string, placeholder: string) => {
+    const fieldKey = `${env}-${section}-${key}`;
+    const isVisible = visibleSecrets[fieldKey];
+    
+    return (
+      <div className="relative">
+        <Input
+          id={fieldKey}
+          type={isVisible ? "text" : "password"}
+          value={value}
+          onChange={(e) => updateEnvironmentConfig(env, section, key, e.target.value)}
+          placeholder={placeholder}
+          className="pr-10"
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+          onClick={() => toggleSecretVisibility(fieldKey)}
+        >
+          {isVisible ? (
+            <EyeOff className="h-4 w-4 text-muted-foreground" />
+          ) : (
+            <Eye className="h-4 w-4 text-muted-foreground" />
+          )}
+        </Button>
+      </div>
+    );
+  };
+
   const renderEnvironmentSettings = (env: 'dev' | 'staging' | 'prod') => {
     const config = environments[env];
 
@@ -199,13 +244,7 @@ export const DockerSettingsManager = ({ settings, onUpdateSettings }: DockerSett
             </div>
             <div>
               <Label htmlFor={`${env}-api-key`}>API_KEY</Label>
-              <Input
-                id={`${env}-api-key`}
-                type="password"
-                value={config.api.API_KEY}
-                onChange={(e) => updateEnvironmentConfig(env, 'api', 'API_KEY', e.target.value)}
-                placeholder="your-api-key"
-              />
+              {renderSecretInput(env, 'api', 'API_KEY', config.api.API_KEY, 'your-api-key')}
             </div>
           </CardContent>
         </Card>
@@ -257,13 +296,7 @@ export const DockerSettingsManager = ({ settings, onUpdateSettings }: DockerSett
             </div>
             <div>
               <Label htmlFor={`${env}-db-password`}>DB_PASSWORD</Label>
-              <Input
-                id={`${env}-db-password`}
-                type="password"
-                value={config.database.DB_PASSWORD}
-                onChange={(e) => updateEnvironmentConfig(env, 'database', 'DB_PASSWORD', e.target.value)}
-                placeholder="password"
-              />
+              {renderSecretInput(env, 'database', 'DB_PASSWORD', config.database.DB_PASSWORD, 'password')}
             </div>
           </CardContent>
         </Card>
@@ -295,10 +328,16 @@ export const DockerSettingsManager = ({ settings, onUpdateSettings }: DockerSett
             {Object.entries(config.custom).map(([key, value]) => (
               <div key={key} className="flex gap-2 items-center">
                 <Input value={key} disabled className="bg-muted" />
-                <Input
-                  value={value}
-                  onChange={(e) => updateEnvironmentConfig(env, 'custom', key, e.target.value)}
-                />
+                {isSecretField(key) ? (
+                  <div className="flex-1 relative">
+                    {renderSecretInput(env, 'custom', key, value, 'value')}
+                  </div>
+                ) : (
+                  <Input
+                    value={value}
+                    onChange={(e) => updateEnvironmentConfig(env, 'custom', key, e.target.value)}
+                  />
+                )}
                 <Button 
                   onClick={() => removeCustomVariable(key)} 
                   size="icon" 
