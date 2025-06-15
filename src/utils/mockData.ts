@@ -6,6 +6,7 @@ export const getProjectPermissions = (projectId: string): Permission[] => {
     "1": [
       {
         id: "1",
+        employeeId: "EMP001",
         name: "김개발",
         email: "kim.dev@example.com",
         role: "developer",
@@ -14,6 +15,7 @@ export const getProjectPermissions = (projectId: string): Permission[] => {
       },
       {
         id: "2",
+        employeeId: "EMP002",
         name: "이슈퍼",
         email: "lee.super@example.com",
         role: "supermanager",
@@ -22,6 +24,7 @@ export const getProjectPermissions = (projectId: string): Permission[] => {
       },
       {
         id: "3",
+        employeeId: "EMP003",
         name: "박매니저",
         email: "park.manager@example.com",
         role: "manager",
@@ -32,6 +35,7 @@ export const getProjectPermissions = (projectId: string): Permission[] => {
     "2": [
       {
         id: "4",
+        employeeId: "EMP004",
         name: "최개발",
         email: "choi.dev@example.com",
         role: "developer",
@@ -40,6 +44,7 @@ export const getProjectPermissions = (projectId: string): Permission[] => {
       },
       {
         id: "5",
+        employeeId: "EMP005",
         name: "정운영",
         email: "jung.operator@example.com",
         role: "operator",
@@ -50,6 +55,7 @@ export const getProjectPermissions = (projectId: string): Permission[] => {
     "3": [
       {
         id: "6",
+        employeeId: "EMP006",
         name: "한슈퍼",
         email: "han.super@example.com",
         role: "supermanager",
@@ -58,6 +64,7 @@ export const getProjectPermissions = (projectId: string): Permission[] => {
       },
       {
         id: "7",
+        employeeId: "EMP007",
         name: "윤매니저",
         email: "yoon.manager@example.com",
         role: "manager",

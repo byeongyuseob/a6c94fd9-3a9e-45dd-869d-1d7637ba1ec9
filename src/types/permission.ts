@@ -1,6 +1,7 @@
 
 export interface Permission {
   id: string;
+  employeeId: string;
   name: string;
   email: string;
   role: "operator" | "manager" | "supermanager" | "developer";
@@ -14,6 +15,7 @@ export interface Permission {
 }
 
 export interface NewUser {
+  employeeId: string;
   name: string;
   email: string;
   role: "operator" | "manager" | "supermanager" | "developer";

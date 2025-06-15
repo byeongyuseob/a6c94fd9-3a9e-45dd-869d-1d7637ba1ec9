@@ -30,16 +30,17 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newUser, setNewUser] = useState<NewUser>({
+    employeeId: "",
     name: "",
     email: "",
     role: "operator",
   });
 
   const handleAddUser = () => {
-    if (!newUser.name.trim() || !newUser.email.trim()) {
+    if (!newUser.employeeId.trim() || !newUser.name.trim() || !newUser.email.trim()) {
       toast({
         title: "오류",
-        description: "이름과 이메일을 모두 입력해주세요.",
+        description: "사번, 이름, 이메일을 모두 입력해주세요.",
         variant: "destructive",
       });
       return;
@@ -47,6 +48,7 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
 
     const permission: Permission = {
       id: Date.now().toString(),
+      employeeId: newUser.employeeId,
       name: newUser.name,
       email: newUser.email,
       role: newUser.role,
@@ -55,7 +57,7 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
     };
 
     onAddUser(permission);
-    setNewUser({ name: "", email: "", role: "operator" });
+    setNewUser({ employeeId: "", name: "", email: "", role: "operator" });
     setIsDialogOpen(false);
     
     toast({
@@ -77,6 +79,15 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
           <DialogTitle>새 사용자 추가</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
+          <div>
+            <Label htmlFor="employeeId">사번</Label>
+            <Input
+              id="employeeId"
+              value={newUser.employeeId}
+              onChange={(e) => setNewUser({ ...newUser, employeeId: e.target.value })}
+              placeholder="EMP001"
+            />
+          </div>
           <div>
             <Label htmlFor="name">이름</Label>
             <Input

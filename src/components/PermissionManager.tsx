@@ -23,14 +23,6 @@ export const PermissionManager = ({ selectedProject }: PermissionManagerProps) =
     setPermissions([...permissions, permission]);
   };
 
-  const updatePermission = (id: string, field: keyof Permission["permissions"], value: boolean) => {
-    setPermissions(permissions.map(p => 
-      p.id === id 
-        ? { ...p, permissions: { ...p.permissions, [field]: value } }
-        : p
-    ));
-  };
-
   if (!selectedProject) {
     return <PermissionEmptyState />;
   }
@@ -42,15 +34,7 @@ export const PermissionManager = ({ selectedProject }: PermissionManagerProps) =
         <AddUserDialog onAddUser={handleAddUser} />
       </div>
 
-      <div className="grid gap-4">
-        {permissions.map((permission) => (
-          <PermissionCard
-            key={permission.id}
-            permission={permission}
-            onUpdatePermission={updatePermission}
-          />
-        ))}
-      </div>
+      <PermissionCard permissions={permissions} />
     </div>
   );
 };
