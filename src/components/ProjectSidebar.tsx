@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -136,7 +135,7 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
                   placeholder="프로젝트 검색..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 h-9 rounded-lg border-sidebar-border bg-sidebar-accent/60 focus:ring-2 focus:ring-primary/30"
+                  className="pl-10 h-9 rounded-lg border-sidebar-border bg-sidebar-accent"
                 />
               </div>
             </div>
@@ -144,7 +143,7 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
             <div className="px-3 pb-2">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" className="w-full rounded-xl flex items-center gap-2 font-medium shadow">
+                  <Button variant="outline" size="sm" className="w-full rounded-lg justify-start text-muted-foreground font-normal border-dashed hover:text-accent-foreground hover:border-solid">
                     <Plus className="h-4 w-4 mr-2" />
                     새 프로젝트
                   </Button>
@@ -204,25 +203,23 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
                     isActive={selectedProject === project.id}
                     tooltip={isCollapsed ? project.name : undefined}
                     className={
-                      `transition-colors group relative
+                      `transition-colors group relative h-auto items-start rounded-xl px-3 py-2.5 
                       ${selectedProject === project.id 
-                        ? "bg-primary/10 border-l-4 border-primary shadow-md" 
-                        : "hover:bg-accent/60"}
-                      rounded-xl px-2 py-2`
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90" 
+                        : "hover:bg-accent"}`
                     }
                   >
                     <Folder 
-                      className={`h-5 w-5 flex-shrink-0 
-                        ${selectedProject === project.id ? "text-primary" : "text-muted-foreground"}
-                        transition-colors`
+                      className={`h-5 w-5 flex-shrink-0 transition-colors 
+                        ${selectedProject === project.id ? "text-primary-foreground" : "text-muted-foreground"}`
                       } 
                     />
                     {!isCollapsed && (
-                      <div className="flex flex-col items-start min-w-0 flex-1 ml-2">
-                        <span className="font-medium text-base truncate w-full">
+                      <div className="flex flex-col items-start min-w-0 flex-1 ml-3">
+                        <span className="font-semibold text-base truncate w-full">
                           {project.name}
                         </span>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <div className={`flex items-center gap-2 text-xs ${selectedProject === project.id ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
                           <div className="flex items-center gap-1">
                             <Users className="h-3 w-3" />
                             {project.memberCount}명
@@ -230,9 +227,6 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
                           <span>•</span>
                           <span>{project.lastUpdated}</span>
                         </div>
-                        {selectedProject === project.id && (
-                          <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">선택됨</span>
-                        )}
                       </div>
                     )}
                   </SidebarMenuButton>
