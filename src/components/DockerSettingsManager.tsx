@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -336,57 +335,6 @@ export const DockerSettingsManager = ({ settings, onUpdateSettings }: DockerSett
           {renderEnvironmentSettings('prod')}
         </TabsContent>
       </Tabs>
-
-      {/* Docker Compose Preview */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Docker Compose 미리보기 ({activeEnvironment.toUpperCase()})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="p-4 bg-muted rounded-lg">
-            <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
-{`version: '3.8'
-services:
-  app:
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      # Application Settings
-      - APP_VERSION=${environments[activeEnvironment].application.APP_VERSION}
-      - DEBUG_MODE=${environments[activeEnvironment].application.DEBUG_MODE}
-      - LOG_LEVEL=${environments[activeEnvironment].application.LOG_LEVEL}
-      
-      # API Settings
-      - API_URL=${environments[activeEnvironment].api.API_URL}
-      - API_KEY=${environments[activeEnvironment].api.API_KEY}
-      
-      # Database Settings
-      - DB_HOST=${environments[activeEnvironment].database.DB_HOST}
-      - DB_PORT=${environments[activeEnvironment].database.DB_PORT}
-      - DB_NAME=${environments[activeEnvironment].database.DB_NAME}
-      - DB_USERNAME=${environments[activeEnvironment].database.DB_USERNAME}
-      - DB_PASSWORD=${environments[activeEnvironment].database.DB_PASSWORD}${Object.entries(environments[activeEnvironment].custom).length > 0 ? '\n      \n      # Custom Variables' : ''}${Object.entries(environments[activeEnvironment].custom).map(([key, value]) => `\n      - ${key}=${value}`).join('')}
-    depends_on:
-      - postgres
-  
-  postgres:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=${environments[activeEnvironment].database.DB_NAME}
-      - POSTGRES_USER=${environments[activeEnvironment].database.DB_USERNAME}
-      - POSTGRES_PASSWORD=${environments[activeEnvironment].database.DB_PASSWORD}
-    ports:
-      - "${environments[activeEnvironment].database.DB_PORT}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:`}
-            </pre>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
