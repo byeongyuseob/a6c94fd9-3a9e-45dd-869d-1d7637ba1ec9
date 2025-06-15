@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,7 +33,7 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
     employeeId: "",
     name: "",
     email: "",
-    role: "operator",
+    role: "regular", // Changed from "operator" to "regular"
   });
 
   const handleAddUser = () => {
@@ -56,7 +57,7 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
     };
 
     onAddUser(permission);
-    setNewUser({ employeeId: "", name: "", email: "", role: "operator" });
+    setNewUser({ employeeId: "", name: "", email: "", role: "regular" }); // Changed from "operator" to "regular"
     setIsDialogOpen(false);
 
     toast({
