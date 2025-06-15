@@ -1,11 +1,12 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Settings, CheckCircle, Database } from "lucide-react";
+import { Settings, Save, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProjectSettings, getProjectSettings } from "@/utils/mockData";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DockerSettingsManager } from "@/components/DockerSettingsManager";
 import { ApiTestPanel } from "@/components/ApiTestPanel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface SettingsManagerProps {
   selectedProject: string | null;
@@ -20,6 +21,7 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
   useEffect(() => {
     if (selectedProject) {
       setIsLoading(true);
+      // 실제 API 호출을 시뮬레이션
       setTimeout(() => {
         setSettings(getProjectSettings(selectedProject));
         setIsLoading(false);
@@ -29,9 +31,13 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
 
   const handleSave = async () => {
     if (!settings) return;
+    
     setIsSaving(true);
+    
     try {
+      // 실제 저장 로직 시뮬레이션
       await new Promise(resolve => setTimeout(resolve, 1000));
+      
       toast({
         title: "설정 저장 완료",
         description: "프로젝트 설정이 성공적으로 저장되었습니다.",
@@ -107,7 +113,7 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
             프로젝트 설정
           </h2>
           <p className="text-muted-foreground mt-1">
-            환경별 API 설정 테스트
+            환경 설정 및 API 조회 관리
           </p>
         </div>
         <Button 
@@ -122,111 +128,89 @@ export const SettingsManager = ({ selectedProject }: SettingsManagerProps) => {
             </>
           ) : (
             <>
-              <CheckCircle className="h-4 w-4" />
+              <Save className="h-4 w-4" />
               설정 저장
             </>
           )}
         </Button>
       </div>
 
-      {/* 환경별 탭 - Development, Staging, Production */}
-      <Tabs defaultValue="dev" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 h-12 bg-secondary/50 backdrop-blur-sm">
+      <Tabs defaultValue="docker" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 h-12 bg-secondary/50 backdrop-blur-sm">
           <TabsTrigger 
-            value="dev"
+            value="docker" 
             className="h-full data-[state=active]:bg-background data-[state=active]:shadow-soft transition-all duration-200"
           >
-            <Database className="h-4 w-4 mr-2" />
-            Development
+            <Settings className="h-4 w-4 mr-2" />
+            환경 설정
           </TabsTrigger>
           <TabsTrigger 
-            value="staging"
+            value="api-test" 
             className="h-full data-[state=active]:bg-background data-[state=active]:shadow-soft transition-all duration-200"
           >
-            <Database className="h-4 w-4 mr-2" />
-            Staging
-          </TabsTrigger>
-          <TabsTrigger 
-            value="prod"
-            className="h-full data-[state=active]:bg-background data-[state=active]:shadow-soft transition-all duration-200"
-          >
-            <Database className="h-4 w-4 mr-2" />
-            Production
+            <CheckCircle className="h-4 w-4 mr-2" />
+            설정 조회
           </TabsTrigger>
         </TabsList>
 
-        {/* Development 탭 */}
-        <TabsContent value="dev" className="mt-6 min-h-[400px] animate-in">
-          <div className="bg-background/50 backdrop-blur-sm rounded-xl border p-6 shadow-soft space-y-6">
-            <h3 className="text-lg font-semibold flex items-center gap-2 mb-2">
-              <Database className="h-5 w-5 text-primary" />
-              Development API 조회
-            </h3>
-            <p className="text-muted-foreground text-sm mb-6">
-              개발 환경의 설정 정보를 조회하고 테스트할 수 있습니다.
-            </p>
-            <ApiTestPanel
-              title="Development 환경 설정 조회"
-              endpoint={`/api/v1/projects/${selectedProject}/settings/environments/dev`}
-              description="개발 환경의 설정 정보를 조회합니다."
-              queryParams={{
-                category: "application",
-                format: "json",
-                include_secrets: "false"
-              }}
-              version="v1"
-            />
+        <TabsContent value="docker" className="mt-6 min-h-[500px] animate-in">
+          <div className="bg-background/50 backdrop-blur-sm rounded-xl border p-6 shadow-soft">
+            <DockerSettingsManager settings={settings} onUpdateSettings={setSettings} />
           </div>
         </TabsContent>
 
-        {/* Staging 탭 */}
-        <TabsContent value="staging" className="mt-6 min-h-[400px] animate-in">
-          <div className="bg-background/50 backdrop-blur-sm rounded-xl border p-6 shadow-soft space-y-6">
-            <h3 className="text-lg font-semibold flex items-center gap-2 mb-2">
-              <Database className="h-5 w-5 text-primary" />
-              Staging API 조회
-            </h3>
-            <p className="text-muted-foreground text-sm mb-6">
-              스테이징 환경의 설정 정보를 조회하고 테스트할 수 있습니다.
-            </p>
-            <ApiTestPanel
-              title="Staging 환경 설정 조회"
-              endpoint={`/api/v1/projects/${selectedProject}/settings/environments/staging`}
-              description="스테이징 환경의 설정 정보를 조회합니다."
-              queryParams={{
-                category: "application",
-                format: "json",
-                include_secrets: "false"
-              }}
-              version="v1"
-            />
-          </div>
-        </TabsContent>
+        <TabsContent value="api-test" className="mt-6 min-h-[500px] animate-in">
+          <div className="space-y-6">
+            <div className="bg-background/50 backdrop-blur-sm rounded-xl border p-6 shadow-soft">
+              <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
+                <CheckCircle className="h-5 w-5 text-primary" />
+                환경 설정 조회 API
+              </h3>
+              <p className="text-muted-foreground text-sm mb-6">
+                각 환경별 설정 정보를 조회하고 테스트할 수 있습니다.
+              </p>
+            
+              <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
+                <ApiTestPanel
+                  title="개발 환경 설정 조회"
+                  endpoint={`/api/v1/projects/${selectedProject}/settings/environments/dev`}
+                  description="개발 환경의 설정 정보를 조회합니다."
+                  queryParams={{
+                    category: "application",
+                    format: "json",
+                    include_secrets: "false"
+                  }}
+                  version="v1"
+                />
 
-        {/* Production 탭 */}
-        <TabsContent value="prod" className="mt-6 min-h-[400px] animate-in">
-          <div className="bg-background/50 backdrop-blur-sm rounded-xl border p-6 shadow-soft space-y-6">
-            <h3 className="text-lg font-semibold flex items-center gap-2 mb-2">
-              <Database className="h-5 w-5 text-primary" />
-              Production API 조회
-            </h3>
-            <p className="text-muted-foreground text-sm mb-6">
-              프로덕션 환경의 설정 정보를 조회하고 테스트할 수 있습니다.
-            </p>
-            <ApiTestPanel
-              title="Production 환경 설정 조회"
-              endpoint={`/api/v1/projects/${selectedProject}/settings/environments/production`}
-              description="프로덕션 환경의 설정 정보를 조회합니다."
-              queryParams={{
-                category: "application",
-                format: "json",
-                include_secrets: "false"
-              }}
-              version="v1"
-            />
+                <ApiTestPanel
+                  title="스테이징 환경 설정 조회"
+                  endpoint={`/api/v1/projects/${selectedProject}/settings/environments/staging`}
+                  description="스테이징 환경의 설정 정보를 조회합니다."
+                  queryParams={{
+                    category: "application",
+                    format: "json",
+                    include_secrets: "false"
+                  }}
+                  version="v1"
+                />
+
+                <ApiTestPanel
+                  title="프로덕션 환경 설정 조회"
+                  endpoint={`/api/v1/projects/${selectedProject}/settings/environments/production`}
+                  description="프로덕션 환경의 설정 정보를 조회합니다."
+                  queryParams={{
+                    category: "application",
+                    format: "json",
+                    include_secrets: "false"
+                  }}
+                  version="v1"
+                />
+              </div>
+            </div>
           </div>
         </TabsContent>
       </Tabs>
     </div>
   );
-}
+};
