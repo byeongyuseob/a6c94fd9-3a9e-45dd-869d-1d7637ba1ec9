@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { FolderOpen, Search } from "lucide-react";
+import { FolderOpen, Search, Plus } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarHeader } from "@/components/ui/sidebar";
 import { ProjectSidebarProjectList } from "@/components/ProjectSidebarProjectList";
 import { ProjectSidebarCreateDialog } from "@/components/ProjectSidebarCreateDialog";
@@ -54,28 +54,33 @@ export const ProjectSidebar = ({
   return (
     <Sidebar
       variant="inset"
-      className="bg-background border-r"
+      className="bg-background/95 backdrop-blur-sm border-r shadow-soft"
     >
-      <SidebarHeader className="border-b">
+      <SidebarHeader className="border-b bg-background/80 backdrop-blur-sm">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary text-primary-foreground rounded-lg">
+            <div className="p-2 bg-gradient-to-br from-primary to-primary/80 text-primary-foreground rounded-xl shadow-soft">
               <FolderOpen className="h-5 w-5" />
             </div>
             <span className="font-bold text-lg tracking-tight">
               프로젝트
             </span>
           </div>
+          {projects.length > 0 && (
+            <div className="text-xs text-muted-foreground bg-secondary px-2 py-1 rounded-full">
+              {projects.length}
+            </div>
+          )}
         </div>
         
         <div className="px-4 pb-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <div className="relative group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4 transition-colors group-focus-within:text-primary" />
             <Input
               placeholder="프로젝트 검색..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-background/50 border-border/50 focus:bg-background focus:border-primary/50 transition-all duration-200"
             />
           </div>
         </div>
@@ -85,7 +90,7 @@ export const ProjectSidebar = ({
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="bg-background/40">
         <ProjectSidebarProjectList
           projects={projects}
           filteredProjects={filteredProjects}
