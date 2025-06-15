@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { FolderOpen } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarHeader } from "@/components/ui/sidebar";
 import { ProjectSidebarProjectList } from "@/components/ProjectSidebarProjectList";
@@ -28,7 +28,7 @@ export const ProjectSidebar = ({
     dateRange: {},
     tags: [],
   });
-  
+
   const { addNotification } = useNotifications();
 
   useEffect(() => {
@@ -63,20 +63,19 @@ export const ProjectSidebar = ({
     return () => clearTimeout(timer);
   }, []);
 
-  // 필터링된 프로젝트 계산
   const filteredProjects = useMemo(() => {
     return projects.filter(project => {
       // 검색어 필터
       if (filters.query) {
         const query = filters.query.toLowerCase();
-        const matchesQuery = 
+        const matchesQuery =
           project.name.toLowerCase().includes(query) ||
           project.description.toLowerCase().includes(query);
         if (!matchesQuery) return false;
       }
 
       // 상태 필터 (현재는 mock 데이터에 status가 없으므로 생략)
-      
+
       // 멤버 수 필터
       if (filters.memberCount) {
         switch (filters.memberCount) {
@@ -106,20 +105,20 @@ export const ProjectSidebar = ({
     });
   }, [projects, filters]);
 
-  const handleCreateProject = (project: Project) => {
-    setProjects([...projects, project]);
+  const handleCreateProject = useCallback((project: Project) => {
+    setProjects(prev => [...prev, project]);
     addNotification({
       type: 'success',
       title: '프로젝트 생성됨',
       message: `${project.name} 프로젝트가 성공적으로 생성되었습니다.`,
     });
-  };
+  }, [addNotification]);
 
-  const handleFiltersChange = (newFilters: SearchFilters) => {
+  const handleFiltersChange = useCallback((newFilters: SearchFilters) => {
     setFilters(newFilters);
-  };
+  }, []);
 
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     setFilters({
       query: '',
       status: '',
@@ -127,16 +126,21 @@ export const ProjectSidebar = ({
       dateRange: {},
       tags: [],
     });
-  };
+  }, []);
 
-  // 키보드 단축키 설정
+  // 키보드 단축키 및 ARIA 내비게이션 보강
   useKeyboardShortcuts([
     {
       key: 'n',
       ctrlKey: true,
       callback: () => {
         // 새 프로젝트 생성 대화상자 열기 (추후 구현)
-        console.log('새 프로젝트 생성 단축키');
+        // 알림만 뜨게 설정
+        addNotification({
+          type: 'info',
+          title: '단축키 안내',
+          message: '프로젝트 생성 버튼을 클릭해보세요.',
+        });
       },
       description: '새 프로젝트 생성',
     },
@@ -157,16 +161,18 @@ export const ProjectSidebar = ({
     },
   ]);
 
+  // 접근성: sidebar role, projectlist ARIA리스트, aria-expanded 등 분산 배치
   return (
     <Sidebar
       variant="inset"
       className="bg-background/95 backdrop-blur-sm border-r shadow-soft"
+      aria-label="프로젝트 사이드바"
     >
       <SidebarHeader className="border-b bg-background/80 backdrop-blur-sm">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gradient-to-br from-primary to-primary/80 text-primary-foreground rounded-xl shadow-soft">
-              <FolderOpen className="h-5 w-5" />
+              <FolderOpen className="h-5 w-5" aria-hidden="true" />
             </div>
             <span className="font-bold text-lg tracking-tight">
               프로젝트
@@ -178,20 +184,19 @@ export const ProjectSidebar = ({
             </div>
           )}
         </div>
-        
         <div className="px-4 pb-4">
-          <AdvancedSearch 
+          <AdvancedSearch
             onFiltersChange={handleFiltersChange}
             onClearFilters={handleClearFilters}
+            aria-label="프로젝트 고급 검색"
           />
         </div>
-        
         <div className="px-4 pb-4">
           <ProjectSidebarCreateDialog onCreate={handleCreateProject} />
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="bg-background/40">
+      <SidebarContent className="bg-background/40" role="region" aria-label="프로젝트 리스트 컨테이너">
         {isLoading ? (
           <SidebarSkeleton />
         ) : (
@@ -201,9 +206,11 @@ export const ProjectSidebar = ({
             selectedProject={selectedProject}
             isCollapsed={false}
             onProjectSelect={onProjectSelect}
+            aria-label="프로젝트 리스트"
           />
         )}
       </SidebarContent>
     </Sidebar>
   );
 };
+// 파일이 210줄로 매우 깁니다. 추가적인 기능이나 유지보수의 용이성을 위해 리팩토링을 권장합니다.

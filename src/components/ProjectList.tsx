@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { ProjectCard } from "./ProjectCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +28,7 @@ interface ProjectListProps {
   selectedProject: string | null;
 }
 
-export const ProjectList = ({ onProjectSelect, selectedProject }: ProjectListProps) => {
+const ProjectListComponent = ({ onProjectSelect, selectedProject }: ProjectListProps) => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -37,7 +37,6 @@ export const ProjectList = ({ onProjectSelect, selectedProject }: ProjectListPro
     description: "",
   });
 
-  // 샘플 프로젝트 데이터
   const [projects, setProjects] = useState<Project[]>([
     {
       id: "1",
@@ -65,12 +64,17 @@ export const ProjectList = ({ onProjectSelect, selectedProject }: ProjectListPro
     },
   ]);
 
-  const filteredProjects = projects.filter(project =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProjects = useMemo(
+    () =>
+      projects.filter(
+        (project) =>
+          project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          project.description.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [projects, searchTerm]
   );
 
-  const handleCreateProject = () => {
+  const handleCreateProject = useCallback(() => {
     if (!newProject.name.trim()) {
       toast({
         title: "오류",
@@ -85,38 +89,47 @@ export const ProjectList = ({ onProjectSelect, selectedProject }: ProjectListPro
       name: newProject.name,
       description: newProject.description,
       status: "active",
-      lastUpdated: new Date().toISOString().split('T')[0],
+      lastUpdated: new Date().toISOString().split("T")[0],
       memberCount: 1,
     };
 
-    setProjects([...projects, project]);
+    setProjects((prev) => [...prev, project]);
     setNewProject({ name: "", description: "" });
     setIsDialogOpen(false);
-    
+
     toast({
       title: "성공",
       description: "새 프로젝트가 생성되었습니다.",
     });
-  };
+  }, [newProject, toast]);
+
+  // 접근성: 에러 메시지, role, aria 속성, 키보드 내비게이션 추가
+  const errorMessage = useMemo(() => {
+    if (!newProject.name.trim() && isDialogOpen) {
+      return "프로젝트 이름을 입력해주세요.";
+    }
+    return "";
+  }, [newProject.name, isDialogOpen]);
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-4 flex-1">
+      <div className="flex justify-between items-center flex-wrap gap-2">
+        <div className="flex items-center space-x-4 flex-1 min-w-0">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
+              aria-label="프로젝트 검색"
               placeholder="프로젝트 검색..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
+              role="searchbox"
             />
           </div>
         </div>
-
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button aria-label="새 프로젝트 생성 열기">
               <Plus className="h-4 w-4 mr-2" />
               새 프로젝트
             </Button>
@@ -125,54 +138,95 @@ export const ProjectList = ({ onProjectSelect, selectedProject }: ProjectListPro
             <DialogHeader>
               <DialogTitle>새 프로젝트 생성</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <form
+              className="space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleCreateProject();
+              }}
+              aria-label="새 프로젝트 생성 폼"
+            >
               <div>
                 <Label htmlFor="name">프로젝트 이름</Label>
                 <Input
                   id="name"
+                  required
+                  aria-required="true"
+                  aria-label="프로젝트 이름"
                   value={newProject.name}
-                  onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewProject({ ...newProject, name: e.target.value })
+                  }
                   placeholder="프로젝트 이름을 입력하세요"
+                  autoFocus
                 />
               </div>
               <div>
                 <Label htmlFor="description">설명</Label>
                 <Input
                   id="description"
+                  aria-label="프로젝트 설명"
                   value={newProject.description}
-                  onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+                  onChange={(e) =>
+                    setNewProject({
+                      ...newProject,
+                      description: e.target.value,
+                    })
+                  }
                   placeholder="프로젝트 설명을 입력하세요"
                 />
               </div>
+              {errorMessage && (
+                <div
+                  className="text-red-500 text-sm"
+                  role="alert"
+                  aria-live="assertive"
+                >
+                  {errorMessage}
+                </div>
+              )}
               <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => setIsDialogOpen(false)}
+                  aria-label="취소"
+                >
                   취소
                 </Button>
-                <Button onClick={handleCreateProject}>
+                <Button type="submit" aria-label="생성">
                   생성
                 </Button>
               </div>
-            </div>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"
+        role="list"
+        aria-label="프로젝트 목록"
+      >
         {filteredProjects.map((project) => (
           <ProjectCard
             key={project.id}
             project={project}
             isSelected={selectedProject === project.id}
             onSelect={() => onProjectSelect(project.id)}
+            tabIndex={0}
+            aria-selected={selectedProject === project.id}
           />
         ))}
       </div>
 
       {filteredProjects.length === 0 && (
-        <div className="text-center py-12">
+        <div className="text-center py-12" role="status" aria-live="polite">
           <p className="text-muted-foreground">검색 결과가 없습니다.</p>
         </div>
       )}
     </div>
   );
 };
+
+export const ProjectList = React.memo(ProjectListComponent);

@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PermissionManager } from "@/components/PermissionManager";
 import { SettingsManager } from "@/components/SettingsManager";
@@ -18,7 +18,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [tabLoading, setTabLoading] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  
+
   const { addNotification } = useNotifications();
 
   useEffect(() => {
@@ -30,18 +30,16 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleTabChange = (value: string) => {
+  const handleTabChange = useCallback((value: string) => {
     setTabLoading(true);
     setCurrentTab(value);
     setCurrentSection(value === "permissions" ? "권한 관리" : "설정 관리");
-    
-    // 탭 전환 로딩 시뮬레이션
     setTimeout(() => {
       setTabLoading(false);
     }, 500);
-  };
+  }, []);
 
-  // 키보드 단축키 설정
+  // 키보드 단축키 설정(접근성 강화)
   useKeyboardShortcuts([
     {
       key: '/',
@@ -68,7 +66,6 @@ const Index = () => {
     {
       key: 'Escape',
       callback: () => {
-        // 활성 모달/대화상자 닫기
         const activeModal = document.querySelector('[role="dialog"]');
         if (activeModal) {
           const closeButton = activeModal.querySelector('[aria-label*="Close"], [aria-label*="닫기"]') as HTMLButtonElement;
@@ -82,7 +79,7 @@ const Index = () => {
     {
       key: '?',
       callback: () => {
-        // 키보드 단축키 도움말 표시
+        // 키보드 단축키 도움말 표시 (버튼에 aria-label 명확화)
         const helpButton = document.querySelector('[aria-label*="키보드"]') as HTMLButtonElement;
         if (helpButton) {
           helpButton.click();
@@ -101,19 +98,20 @@ const Index = () => {
       <div
         className="min-h-screen flex w-full bg-gradient-to-br from-background via-secondary/20 to-background"
         style={{ "--sidebar-width": "20rem" } as React.CSSProperties}
+        aria-label="메인 대시보드 레이아웃"
       >
-        <ProjectSidebar 
+        <ProjectSidebar
           onProjectSelect={setSelectedProject}
           selectedProject={selectedProject}
         />
-        
-        <SidebarInset className="flex-1">
-          <Header 
+
+        <SidebarInset className="flex-1 min-w-0">
+          <Header
             selectedProject={selectedProject}
             currentSection={currentSection}
           />
 
-          <main className="flex flex-1 flex-col gap-6 p-4 md:p-6 animate-in">
+          <main className="flex flex-1 flex-col gap-6 p-4 md:p-6 animate-in" role="main">
             <div className="mb-2">
               <h2 className="text-2xl font-bold text-foreground mb-1 flex items-center gap-3">
                 <div className="p-1.5 bg-primary/10 text-primary rounded-lg">
@@ -122,8 +120,8 @@ const Index = () => {
                 대시보드
               </h2>
               <p className="text-muted-foreground">
-                {selectedProject 
-                  ? "선택된 프로젝트의 권한과 설정을 관리하세요" 
+                {selectedProject
+                  ? "선택된 프로젝트의 권한과 설정을 관리하세요"
                   : "시작하려면 왼쪽에서 프로젝트를 선택해주세요"
                 }
               </p>
@@ -131,19 +129,33 @@ const Index = () => {
 
             {selectedProject ? (
               <div className="bg-background/60 backdrop-blur-sm rounded-xl border shadow-soft animate-in">
-                <Tabs value={currentTab} className="w-full" onValueChange={handleTabChange}>
+                <Tabs
+                  value={currentTab}
+                  className="w-full"
+                  onValueChange={handleTabChange}
+                  role="tablist"
+                  aria-label="관리 탭"
+                >
                   <div className="border-b px-6 py-4 bg-background/40 rounded-t-xl">
-                    <TabsList className="bg-secondary/50 backdrop-blur-sm">
-                      <TabsTrigger 
-                        value="permissions" 
+                    <TabsList className="bg-secondary/50 backdrop-blur-sm" aria-label="관리 탭 리스트">
+                      <TabsTrigger
+                        value="permissions"
                         className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-soft"
+                        aria-label="권한 관리 탭"
+                        aria-selected={currentTab === "permissions"}
+                        tabIndex={0}
+                        role="tab"
                       >
                         <Users className="h-4 w-4" />
                         <span className="hidden sm:inline">권한 관리</span>
                       </TabsTrigger>
-                      <TabsTrigger 
-                        value="settings" 
+                      <TabsTrigger
+                        value="settings"
                         className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-soft"
+                        aria-label="설정 관리 탭"
+                        aria-selected={currentTab === "settings"}
+                        tabIndex={0}
+                        role="tab"
                       >
                         <Settings className="h-4 w-4" />
                         <span className="hidden sm:inline">설정 관리</span>
@@ -151,7 +163,12 @@ const Index = () => {
                     </TabsList>
                   </div>
 
-                  <TabsContent value="permissions" className="p-4 md:p-6 m-0 animate-in">
+                  <TabsContent
+                    value="permissions"
+                    className="p-4 md:p-6 m-0 animate-in"
+                    role="tabpanel"
+                    aria-labelledby="권한 관리 탭"
+                  >
                     {tabLoading ? (
                       <TabContentSkeleton />
                     ) : (
@@ -159,7 +176,12 @@ const Index = () => {
                     )}
                   </TabsContent>
 
-                  <TabsContent value="settings" className="p-4 md:p-6 m-0 animate-in">
+                  <TabsContent
+                    value="settings"
+                    className="p-4 md:p-6 m-0 animate-in"
+                    role="tabpanel"
+                    aria-labelledby="설정 관리 탭"
+                  >
                     {tabLoading ? (
                       <TabContentSkeleton />
                     ) : (
@@ -206,3 +228,5 @@ const Index = () => {
 };
 
 export default Index;
+
+// 파일이 209줄로 매우 깁니다. 추가적인 분할 리팩토링을 권장합니다.

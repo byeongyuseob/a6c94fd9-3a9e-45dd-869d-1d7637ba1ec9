@@ -18,30 +18,31 @@ export const Header = ({ selectedProject, currentSection }: HeaderProps) => {
   const { isDark, toggleTheme } = useTheme();
 
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b bg-background/95 backdrop-blur-supports-[backdrop-filter]:bg-background/60 px-4 sticky top-0 z-50 shadow-sm">
-      <div className="flex items-center gap-4">
-        <SidebarTrigger className="h-7 w-7" />
+    <header
+      className="flex h-16 shrink-0 items-center justify-between gap-4 border-b bg-background/95 backdrop-blur-supports-[backdrop-filter]:bg-background/60 px-4 sticky top-0 z-50 shadow-sm"
+      aria-label="상단 헤더"
+      role="banner"
+    >
+      <div className="flex items-center gap-4 min-w-0">
+        <SidebarTrigger className="h-7 w-7" aria-label="사이드바 열기" />
         <Logo size="sm" className="hidden md:flex" />
-        <div className="hidden lg:block">
-          <BreadcrumbNav 
-            selectedProject={selectedProject} 
+        <div className="hidden lg:block min-w-0 w-auto overflow-x-auto">
+          <BreadcrumbNav
+            selectedProject={selectedProject}
             currentSection={currentSection}
           />
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <Button
           variant="ghost"
           size="icon"
           onClick={toggleTheme}
           className="h-8 w-8"
+          aria-label="테마 전환"
         >
-          {isDark ? (
-            <Sun className="h-4 w-4" />
-          ) : (
-            <Moon className="h-4 w-4" />
-          )}
+          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           <span className="sr-only">테마 전환</span>
         </Button>
 
@@ -49,7 +50,12 @@ export const Header = ({ selectedProject, currentSection }: HeaderProps) => {
 
         <KeyboardShortcutsHelp />
 
-        <Button variant="ghost" size="icon" className="h-8 w-8">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          aria-label="설정"
+        >
           <Settings className="h-4 w-4" />
           <span className="sr-only">설정</span>
         </Button>
