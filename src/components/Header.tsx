@@ -2,12 +2,13 @@
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useTheme } from "@/hooks/useTheme";
-import { Sun, Moon, Settings } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 // Logo import 주석 처리 또는 삭제
 // import { Logo } from "@/components/Logo";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
-import { NotificationPanel } from "@/components/NotificationPanel";
+// NotificationPanel 및 Settings import 제거
 import { KeyboardShortcutsHelp } from "@/components/KeyboardShortcutsHelp";
+// 활성 프로젝트 뱃지 삭제를 위해 Input import도 사용하지 않으므로 주석/삭제해도 무방함
 import { Input } from "@/components/ui/input";
 
 interface HeaderProps {
@@ -47,27 +48,10 @@ export const Header = ({ selectedProject, currentSection }: HeaderProps) => {
           <span className="sr-only">테마 전환</span>
         </Button>
 
-        <NotificationPanel />
-
         <KeyboardShortcutsHelp />
-
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          aria-label="설정"
-        >
-          <Settings className="h-4 w-4" />
-          <span className="sr-only">설정</span>
-        </Button>
-
-        {selectedProject && (
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-xs font-medium ml-2">
-            <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></div>
-            활성 프로젝트
-          </div>
-        )}
+        {/* 알림, 설정, 활성 프로젝트 인디케이터 전부 삭제 */}
       </div>
     </header>
   );
 };
+
