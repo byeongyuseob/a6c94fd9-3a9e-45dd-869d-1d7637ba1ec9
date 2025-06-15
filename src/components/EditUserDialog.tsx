@@ -37,6 +37,9 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
     role: permission.role,
   });
 
+  // Ensure the Select never receives an empty string as value
+  const safeRole = editedUser.role && editedUser.role !== "" ? editedUser.role : "operator";
+
   const handleEditUser = () => {
     if (!editedUser.employeeId.trim() || !editedUser.name.trim() || !editedUser.email.trim()) {
       toast({
@@ -52,13 +55,13 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
       employeeId: editedUser.employeeId,
       name: editedUser.name,
       email: editedUser.email,
-      role: editedUser.role,
-      permissions: getDefaultPermissions(editedUser.role),
+      role: safeRole,
+      permissions: getDefaultPermissions(safeRole),
     };
 
     onEditUser(updatedPermission);
     setIsDialogOpen(false);
-    
+
     toast({
       title: "성공",
       description: "사용자 정보가 수정되었습니다.",
@@ -107,9 +110,14 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
           </div>
           <div>
             <Label htmlFor="edit-role">역할</Label>
-            <Select value={editedUser.role} onValueChange={(value: any) => setEditedUser({ ...editedUser, role: value })}>
-              <SelectTrigger>
-                <SelectValue />
+            <Select
+              value={safeRole}
+              onValueChange={(value: any) =>
+                setEditedUser({ ...editedUser, role: value || "operator" })
+              }
+            >
+              <SelectTrigger aria-label="역할 선택">
+                <SelectValue placeholder="역할 선택" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="operator">운영자</SelectItem>

@@ -36,6 +36,9 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
     role: "operator",
   });
 
+  // Ensure the Select never receives an empty string as value
+  const safeRole = newUser.role && newUser.role !== "" ? newUser.role : "operator";
+
   const handleAddUser = () => {
     if (!newUser.employeeId.trim() || !newUser.name.trim() || !newUser.email.trim()) {
       toast({
@@ -51,15 +54,15 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
       employeeId: newUser.employeeId,
       name: newUser.name,
       email: newUser.email,
-      role: newUser.role,
-      permissions: getDefaultPermissions(newUser.role),
+      role: safeRole,
+      permissions: getDefaultPermissions(safeRole),
       lastActive: new Date().toISOString().split('T')[0],
     };
 
     onAddUser(permission);
     setNewUser({ employeeId: "", name: "", email: "", role: "operator" });
     setIsDialogOpen(false);
-    
+
     toast({
       title: "성공",
       description: "새 사용자가 추가되었습니다.",
@@ -109,9 +112,14 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
           </div>
           <div>
             <Label htmlFor="role">역할</Label>
-            <Select value={newUser.role} onValueChange={(value: any) => setNewUser({ ...newUser, role: value })}>
-              <SelectTrigger>
-                <SelectValue />
+            <Select
+              value={safeRole}
+              onValueChange={(value: any) =>
+                setNewUser({ ...newUser, role: value || "operator" })
+              }
+            >
+              <SelectTrigger aria-label="역할 선택">
+                <SelectValue placeholder="역할 선택" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="operator">운영자</SelectItem>
