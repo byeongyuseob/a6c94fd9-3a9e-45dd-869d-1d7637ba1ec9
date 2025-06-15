@@ -54,7 +54,7 @@ export const ProjectSidebar = ({
   return (
     <Sidebar
       variant="inset"
-      className="!bg-sidebar/95 shadow-xl rounded-r-2xl border-r border-sidebar-border w-72 min-w-[210px] max-w-[320px]"
+      className="!bg-sidebar/95 shadow-xl rounded-r-2xl border-r border-sidebar-border w-72 min-w-[210px] max-w-[320px] flex-shrink-0" // <-- 핵심: flex-shrink-0 추가
     >
       <SidebarHeader>
         <div className="flex items-center justify-between p-3">
