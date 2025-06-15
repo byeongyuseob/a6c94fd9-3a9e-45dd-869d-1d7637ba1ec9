@@ -54,7 +54,7 @@ export const ProjectSidebar = ({
   return (
     <Sidebar
       variant="inset"
-      className="bg-background border-r w-80 min-w-[280px] max-w-[380px] flex-shrink-0"
+      className="bg-background border-r"
     >
       <SidebarHeader className="border-b">
         <div className="flex items-center justify-between p-4">
