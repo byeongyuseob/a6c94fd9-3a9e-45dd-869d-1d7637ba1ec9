@@ -1,37 +1,10 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarTrigger,
-  useSidebar,
-} from "@/components/ui/sidebar";
-import { Plus, Search, FolderOpen, Users, Folder } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  lastUpdated: string;
-  memberCount: number;
-}
+import { FolderOpen, Search } from "lucide-react";
+import { Sidebar, SidebarContent, SidebarHeader, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { ProjectSidebarProjectList } from "@/components/ProjectSidebarProjectList";
+import { ProjectSidebarCreateDialog } from "@/components/ProjectSidebarCreateDialog";
+import { Project } from "@/types/project";
 
 interface ProjectSidebarProps {
   onProjectSelect: (projectId: string) => void;
@@ -39,15 +12,8 @@ interface ProjectSidebarProps {
 }
 
 export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSidebarProps) => {
-  const { toast } = useToast();
   const { state } = useSidebar();
   const [searchTerm, setSearchTerm] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newProject, setNewProject] = useState({
-    name: "",
-    description: "",
-  });
-
   const [projects, setProjects] = useState<Project[]>([
     {
       id: "1",
@@ -77,32 +43,8 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
     project.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleCreateProject = () => {
-    if (!newProject.name.trim()) {
-      toast({
-        title: "오류",
-        description: "프로젝트 이름을 입력해주세요.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const project: Project = {
-      id: Date.now().toString(),
-      name: newProject.name,
-      description: newProject.description,
-      lastUpdated: new Date().toISOString().split('T')[0],
-      memberCount: 1,
-    };
-
+  const handleCreateProject = (project: Project) => {
     setProjects([...projects, project]);
-    setNewProject({ name: "", description: "" });
-    setIsDialogOpen(false);
-    
-    toast({
-      title: "성공",
-      description: "새 프로젝트가 생성되었습니다.",
-    });
   };
 
   const isCollapsed = state === "collapsed";
@@ -139,113 +81,23 @@ export const ProjectSidebar = ({ onProjectSelect, selectedProject }: ProjectSide
                 />
               </div>
             </div>
-
             <div className="px-3 pb-2">
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="w-full rounded-lg justify-start text-muted-foreground font-normal border-dashed hover:text-accent-foreground hover:border-solid">
-                    <Plus className="h-4 w-4 mr-2" />
-                    새 프로젝트
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>새 프로젝트 생성</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="name">프로젝트 이름</Label>
-                      <Input
-                        id="name"
-                        value={newProject.name}
-                        onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
-                        placeholder="프로젝트 이름을 입력하세요"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="description">설명</Label>
-                      <Input
-                        id="description"
-                        value={newProject.description}
-                        onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                        placeholder="프로젝트 설명을 입력하세요"
-                      />
-                    </div>
-                    <div className="flex justify-end space-x-2">
-                      <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                        취소
-                      </Button>
-                      <Button onClick={handleCreateProject}>
-                        생성
-                      </Button>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+              <ProjectSidebarCreateDialog onCreate={handleCreateProject} />
             </div>
           </>
         )}
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          {!isCollapsed && (
-            <SidebarGroupLabel className="text-xs tracking-wider font-bold text-muted-foreground pl-2">
-              프로젝트 목록
-            </SidebarGroupLabel>
-          )}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {filteredProjects.map((project) => (
-                <SidebarMenuItem key={project.id}>
-                  <SidebarMenuButton 
-                    onClick={() => onProjectSelect(project.id)}
-                    isActive={selectedProject === project.id}
-                    tooltip={isCollapsed ? project.name : undefined}
-                    className={
-                      `transition-colors group relative h-auto items-start rounded-xl px-3 py-2.5 
-                      ${selectedProject === project.id 
-                        ? "bg-primary text-primary-foreground hover:bg-primary/90" 
-                        : "hover:bg-accent"}`
-                    }
-                  >
-                    <Folder 
-                      className={`h-5 w-5 flex-shrink-0 transition-colors 
-                        ${selectedProject === project.id ? "text-primary-foreground" : "text-muted-foreground"}`
-                      } 
-                    />
-                    {!isCollapsed && (
-                      <div className="flex flex-col items-start min-w-0 flex-1 ml-3">
-                        <span className="font-semibold text-base truncate w-full">
-                          {project.name}
-                        </span>
-                        <div className={`flex items-center gap-2 text-xs ${selectedProject === project.id ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
-                          <div className="flex items-center gap-1">
-                            <Users className="h-3 w-3" />
-                            {project.memberCount}명
-                          </div>
-                          <span>•</span>
-                          <span>{project.lastUpdated}</span>
-                        </div>
-                      </div>
-                    )}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-            
-            {!isCollapsed && filteredProjects.length === 0 && (
-              <div className="text-center py-6">
-                <p className="text-muted-foreground text-sm">검색 결과가 없습니다.</p>
-              </div>
-            )}
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <ProjectSidebarProjectList
+          projects={projects}
+          filteredProjects={filteredProjects}
+          selectedProject={selectedProject}
+          isCollapsed={isCollapsed}
+          onProjectSelect={onProjectSelect}
+        />
       </SidebarContent>
-
     </Sidebar>
   );
 };
-
-// 프로젝트 사이드바 파일 길이가 250줄이 넘었습니다. 
-// 더 유지보수하기 쉽게 리팩터링을 원하시면 "리팩터링 해줘"라고 말씀해 주세요!
+// 리팩터링됨: 250줄 이상 컴포넌트를 제거/분리
