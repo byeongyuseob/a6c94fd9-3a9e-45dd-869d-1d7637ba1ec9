@@ -3,7 +3,7 @@ export interface Permission {
   id: string;
   name: string;
   email: string;
-  role: "owner" | "admin" | "member" | "viewer";
+  role: "operator" | "manager" | "supermanager" | "developer";
   permissions: {
     read: boolean;
     write: boolean;
@@ -16,5 +16,5 @@ export interface Permission {
 export interface NewUser {
   name: string;
   email: string;
-  role: "owner" | "admin" | "member" | "viewer";
+  role: "operator" | "manager" | "supermanager" | "developer";
 }

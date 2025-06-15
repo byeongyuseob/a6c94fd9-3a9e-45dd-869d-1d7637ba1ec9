@@ -32,7 +32,7 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
   const [newUser, setNewUser] = useState<NewUser>({
     name: "",
     email: "",
-    role: "member",
+    role: "operator",
   });
 
   const handleAddUser = () => {
@@ -55,7 +55,7 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
     };
 
     onAddUser(permission);
-    setNewUser({ name: "", email: "", role: "member" });
+    setNewUser({ name: "", email: "", role: "operator" });
     setIsDialogOpen(false);
     
     toast({
@@ -103,9 +103,10 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="viewer">뷰어</SelectItem>
-                <SelectItem value="member">멤버</SelectItem>
-                <SelectItem value="admin">관리자</SelectItem>
+                <SelectItem value="operator">운영자</SelectItem>
+                <SelectItem value="manager">매니저</SelectItem>
+                <SelectItem value="supermanager">슈퍼매니저</SelectItem>
+                <SelectItem value="developer">개발자</SelectItem>
               </SelectContent>
             </Select>
           </div>
