@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useTheme } from "@/hooks/useTheme";
 import { Sun, Moon, Settings } from "lucide-react";
-import { Logo } from "@/components/Logo";
+// Logo import 주석 처리 또는 삭제
+// import { Logo } from "@/components/Logo";
 import { BreadcrumbNav } from "@/components/BreadcrumbNav";
 import { NotificationPanel } from "@/components/NotificationPanel";
 import { KeyboardShortcutsHelp } from "@/components/KeyboardShortcutsHelp";
@@ -25,7 +26,7 @@ export const Header = ({ selectedProject, currentSection }: HeaderProps) => {
     >
       <div className="flex items-center gap-4 min-w-0">
         <SidebarTrigger className="h-7 w-7" aria-label="사이드바 열기" />
-        <Logo size="sm" className="hidden md:flex" />
+        {/* <Logo size="sm" className="hidden md:flex" /> 삭제 */}
         <div className="hidden lg:block min-w-0 w-auto overflow-x-auto">
           <BreadcrumbNav
             selectedProject={selectedProject}

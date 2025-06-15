@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { FolderOpen } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarHeader } from "@/components/ui/sidebar";
@@ -110,7 +111,7 @@ export const ProjectSidebar = ({
               <FolderOpen className="h-5 w-5" aria-hidden="true" />
             </div>
             <span className="font-bold text-lg tracking-tight">
-              프로젝트
+              ProjectHub
             </span>
           </div>
           {!isLoading && projects.length > 0 && (
@@ -142,3 +143,4 @@ export const ProjectSidebar = ({
   );
 };
 // 파일이 210줄로 매우 깁니다. 추가적인 기능이나 유지보수의 용이성을 위해 리팩토링을 권장합니다.
+
