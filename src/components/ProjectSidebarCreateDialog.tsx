@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Project } from "@/types/project";
-import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import { SidebarMenuButton } from "@/components/ui/sidebar";
 
 interface Props {
   onCreate: (project: Project) => void;
@@ -44,7 +45,7 @@ export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <SidebarMenuItem>
+        <div>
           <SidebarMenuButton
             onClick={() => setOpen(true)}
             className="h-auto items-start rounded-xl p-4 border transition-all duration-300 hover:shadow-soft group animate-in hover:bg-accent/50 hover:text-accent-foreground bg-background/60 border-border/50 hover:border-border hover:shadow-soft"
@@ -63,7 +64,7 @@ export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
               </p>
             </div>
           </SidebarMenuButton>
-        </SidebarMenuItem>
+        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
