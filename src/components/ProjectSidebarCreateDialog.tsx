@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Project } from "@/types/project";
+import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 
 interface Props {
   onCreate: (project: Project) => void;
@@ -44,27 +45,33 @@ export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className="w-full p-1 rounded-2xl bg-gradient-to-r from-secondary/30 via-secondary/20 to-secondary/30 hover:from-primary/5 hover:via-primary/10 hover:to-primary/5 transition-all duration-300 group">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="w-full h-auto rounded-xl justify-start bg-background/80 hover:bg-background/90 border-0 p-4 group-hover:shadow-sm transition-all duration-300"
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            onClick={() => setOpen(true)}
+            className="h-auto items-start rounded-xl p-4 border transition-all duration-300 hover:shadow-soft group animate-in hover:bg-accent/50 hover:text-accent-foreground bg-background/60 border-border/50 hover:border-border hover:shadow-soft"
           >
-            <div className="flex items-center gap-3 w-full">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center group-hover:from-primary/20 group-hover:to-primary/10 transition-all duration-300 shadow-sm">
-                <Plus className="h-4 w-4 text-primary" />
-              </div>
-              <div className="flex flex-col items-start text-left">
-                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-300">
-                  새 프로젝트
-                </span>
-                <span className="text-xs text-muted-foreground group-hover:text-foreground/70 transition-colors duration-300">
-                  프로젝트를 생성해보세요
-                </span>
+            <div className="p-2.5 rounded-xl flex-shrink-0 transition-all duration-300 group-hover:scale-105 bg-secondary/80 group-hover:bg-secondary">
+              <Plus className="h-4 w-4 transition-all duration-300 text-secondary-foreground group-hover:text-foreground" />
+            </div>
+            
+            <div className="flex flex-col items-start min-w-0 flex-1 ml-3">
+              <span className="font-semibold text-sm truncate w-full transition-colors duration-300 text-foreground group-hover:text-foreground">
+                새 프로젝트
+              </span>
+              
+              <p className="text-xs mt-1.5 line-clamp-2 transition-colors duration-300 text-muted-foreground group-hover:text-foreground/80">
+                새로운 프로젝트를 생성하세요
+              </p>
+              
+              <div className="flex items-center gap-4 text-xs mt-3 transition-colors duration-300 text-muted-foreground group-hover:text-foreground/70">
+                <div className="flex items-center gap-1.5">
+                  <Plus className="h-3 w-3" />
+                  <span className="font-medium">생성</span>
+                </div>
               </div>
             </div>
-          </Button>
-        </div>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
