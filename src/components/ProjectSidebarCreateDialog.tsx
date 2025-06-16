@@ -44,8 +44,14 @@ export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="w-full rounded-lg justify-start text-muted-foreground font-normal border-dashed hover:text-accent-foreground hover:border-solid">
-          <Plus className="h-4 w-4 mr-2" />
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="w-full rounded-xl justify-start text-muted-foreground font-medium border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all duration-200 py-3 group"
+        >
+          <div className="p-1.5 bg-gradient-to-br from-primary/10 to-primary/5 text-primary rounded-lg mr-3 group-hover:from-primary/15 group-hover:to-primary/10 transition-all duration-200">
+            <Plus className="h-4 w-4" />
+          </div>
           새 프로젝트
         </Button>
       </DialogTrigger>
