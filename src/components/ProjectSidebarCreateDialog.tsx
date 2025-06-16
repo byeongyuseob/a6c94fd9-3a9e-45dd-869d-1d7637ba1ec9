@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,13 +61,6 @@ export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
               <p className="text-xs mt-1.5 line-clamp-2 transition-colors duration-300 text-muted-foreground group-hover:text-foreground/80">
                 새로운 프로젝트를 생성하세요
               </p>
-              
-              <div className="flex items-center gap-4 text-xs mt-3 transition-colors duration-300 text-muted-foreground group-hover:text-foreground/70">
-                <div className="flex items-center gap-1.5">
-                  <Plus className="h-3 w-3" />
-                  <span className="font-medium">생성</span>
-                </div>
-              </div>
             </div>
           </SidebarMenuButton>
         </SidebarMenuItem>
