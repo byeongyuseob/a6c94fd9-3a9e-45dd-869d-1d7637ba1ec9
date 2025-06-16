@@ -44,16 +44,27 @@ export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="w-full rounded-xl justify-start text-muted-foreground font-medium border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all duration-200 py-3 group"
-        >
-          <div className="p-1.5 bg-gradient-to-br from-primary/10 to-primary/5 text-primary rounded-lg mr-3 group-hover:from-primary/15 group-hover:to-primary/10 transition-all duration-200">
-            <Plus className="h-4 w-4" />
-          </div>
-          새 프로젝트
-        </Button>
+        <div className="w-full p-1 rounded-2xl bg-gradient-to-r from-secondary/30 via-secondary/20 to-secondary/30 hover:from-primary/5 hover:via-primary/10 hover:to-primary/5 transition-all duration-300 group">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="w-full h-auto rounded-xl justify-start bg-background/80 hover:bg-background/90 border-0 p-4 group-hover:shadow-sm transition-all duration-300"
+          >
+            <div className="flex items-center gap-3 w-full">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center group-hover:from-primary/20 group-hover:to-primary/10 transition-all duration-300 shadow-sm">
+                <Plus className="h-4 w-4 text-primary" />
+              </div>
+              <div className="flex flex-col items-start text-left">
+                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors duration-300">
+                  새 프로젝트
+                </span>
+                <span className="text-xs text-muted-foreground group-hover:text-foreground/70 transition-colors duration-300">
+                  프로젝트를 생성해보세요
+                </span>
+              </div>
+            </div>
+          </Button>
+        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
