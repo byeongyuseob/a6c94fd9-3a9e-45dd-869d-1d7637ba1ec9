@@ -1,14 +1,12 @@
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState, useEffect, useCallback } from "react";
 import { PermissionManager } from "@/components/PermissionManager";
 import { SettingsManager } from "@/components/SettingsManager";
 import { ProjectSidebar } from "@/components/ProjectSidebar";
 import { Header } from "@/components/Header";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { Settings, Users, FolderOpen } from "lucide-react";
-import { PageLoader, TabContentSkeleton } from "@/components/LoadingStates";
-import { useNotifications } from "@/contexts/NotificationContext";
+import { FolderOpen } from "lucide-react";
+import { PageLoader } from "@/components/LoadingStates";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { ProjectTabPanel } from "@/components/ProjectTabPanel";
 
@@ -17,13 +15,8 @@ const Index = () => {
   const [currentSection, setCurrentSection] = useState<string>("대시보드");
   const [currentTab, setCurrentTab] = useState<string>("permissions");
   const [isLoading, setIsLoading] = useState(true);
-  const [tabLoading, setTabLoading] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  const { addNotification } = useNotifications();
 
   useEffect(() => {
-    // 초기 로딩 시뮬레이션
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1500);
@@ -32,12 +25,8 @@ const Index = () => {
   }, []);
 
   const handleTabChange = useCallback((value: string) => {
-    setTabLoading(true);
     setCurrentTab(value);
     setCurrentSection(value === "permissions" ? "권한 관리" : "설정 관리");
-    setTimeout(() => {
-      setTabLoading(false);
-    }, 500);
   }, []);
 
   if (isLoading) {
@@ -49,7 +38,6 @@ const Index = () => {
       <div
         className="min-h-screen flex w-full bg-gradient-to-br from-background via-secondary/20 to-background"
         style={{ "--sidebar-width": "20rem" } as React.CSSProperties}
-        aria-label="메인 대시보드 레이아웃"
       >
         <ProjectSidebar
           onProjectSelect={setSelectedProject}
@@ -62,7 +50,7 @@ const Index = () => {
             currentSection={currentSection}
           />
 
-          <main className="flex flex-1 flex-col gap-6 p-4 md:p-6 animate-in" role="main">
+          <main className="flex flex-1 flex-col gap-6 p-4 md:p-6 animate-in">
             <DashboardHeader selectedProject={selectedProject} />
 
             {selectedProject ? (

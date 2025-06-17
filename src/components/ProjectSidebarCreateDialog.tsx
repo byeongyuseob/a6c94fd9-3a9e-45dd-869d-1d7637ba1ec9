@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Project } from "@/types/project";
@@ -69,6 +69,9 @@ export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>새 프로젝트 생성</DialogTitle>
+          <DialogDescription>
+            새로운 프로젝트를 생성하고 관리를 시작하세요.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div>
