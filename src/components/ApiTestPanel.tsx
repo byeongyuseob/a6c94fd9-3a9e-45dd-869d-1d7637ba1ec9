@@ -13,8 +13,6 @@ export const ApiTestPanel = ({
 }: ApiTestPanelProps) => {
   const headers = {
     "Accept": "application/json",
-    "Authorization": "Bearer your-jwt-token",
-    "X-API-Version": version,
     "User-Agent": "Lovable-ApiTest/1.0"
   };
 
@@ -54,4 +52,3 @@ export const ApiTestPanel = ({
     </Card>
   );
 };
-// 리팩터링 완료: 하위 모듈 분리

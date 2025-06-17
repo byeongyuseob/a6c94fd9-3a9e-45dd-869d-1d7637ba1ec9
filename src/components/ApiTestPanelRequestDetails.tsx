@@ -67,8 +67,6 @@ export const ApiTestPanelRequestDetails = ({
         <pre className="text-xs pr-8">
 {`curl -X GET "${buildUrl()}" \\
   -H "Accept: application/json" \\
-  -H "Authorization: Bearer your-jwt-token" \\
-  -H "X-API-Version: ${version}" \\
   -H "User-Agent: Lovable-ApiTest/1.0"`}
         </pre>
         <Button
@@ -76,7 +74,7 @@ export const ApiTestPanelRequestDetails = ({
           size="sm"
           className="absolute top-2 right-2"
           onClick={() => copyToClipboard(
-            `curl -X GET "${buildUrl()}" -H "Accept: application/json" -H "Authorization: Bearer your-jwt-token" -H "X-API-Version: ${version}" -H "User-Agent: Lovable-ApiTest/1.0"`
+            `curl -X GET "${buildUrl()}" -H "Accept: application/json" -H "User-Agent: Lovable-ApiTest/1.0"`
           )}
         >
           <Copy className="h-4 w-4" />

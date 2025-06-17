@@ -1,7 +1,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useNotifications } from "@/contexts/NotificationContext";
-import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { Project } from "@/types/project";
 
 interface UseProjectSidebarProps {
@@ -52,36 +51,6 @@ export const useProjectSidebar = ({ onProjectSelect }: UseProjectSidebarProps) =
       message: `${project.name} 프로젝트가 성공적으로 생성되었습니다.`,
     });
   }, [addNotification]);
-
-  useKeyboardShortcuts([
-    {
-      key: 'n',
-      ctrlKey: true,
-      callback: () => {
-        addNotification({
-          type: 'info',
-          title: '단축키 안내',
-          message: '프로젝트 생성 버튼을 클릭해보세요.',
-        });
-      },
-      description: '새 프로젝트 생성',
-    },
-    {
-      key: '1',
-      callback: () => projects[0] && onProjectSelect(projects[0].id),
-      description: '첫 번째 프로젝트 선택',
-    },
-    {
-      key: '2',
-      callback: () => projects[1] && onProjectSelect(projects[1].id),
-      description: '두 번째 프로젝트 선택',
-    },
-    {
-      key: '3',
-      callback: () => projects[2] && onProjectSelect(projects[2].id),
-      description: '세 번째 프로젝트 선택',
-    },
-  ]);
 
   return {
     isLoading,
