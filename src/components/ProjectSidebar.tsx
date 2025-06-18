@@ -16,7 +16,7 @@ export const ProjectSidebar = ({
   onProjectSelect,
   selectedProject,
 }: ProjectSidebarProps) => {
-  const { isLoading, projects, handleCreateProject } = useProjectSidebar({ onProjectSelect });
+  const { isLoading, projects, handleCreateProject, handleUpdateProject, handleDeleteProject } = useProjectSidebar({ onProjectSelect });
 
   return (
     <Sidebar
@@ -55,6 +55,8 @@ export const ProjectSidebar = ({
             selectedProject={selectedProject}
             isCollapsed={false}
             onProjectSelect={onProjectSelect}
+            onProjectUpdate={handleUpdateProject}
+            onProjectDelete={handleDeleteProject}
             aria-label="프로젝트 리스트"
           />
         )}

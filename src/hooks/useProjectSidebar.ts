@@ -55,9 +55,30 @@ export const useProjectSidebar = ({ onProjectSelect }: UseProjectSidebarProps) =
     });
   }, [addNotification]);
 
+  const handleUpdateProject = useCallback((updatedProject: Project) => {
+    setProjects(prev => prev.map(p => p.id === updatedProject.id ? updatedProject : p));
+    addNotification({
+      type: 'success',
+      title: '프로젝트 수정됨',
+      message: `${updatedProject.name} 프로젝트가 성공적으로 수정되었습니다.`,
+    });
+  }, [addNotification]);
+
+  const handleDeleteProject = useCallback((projectId: string) => {
+    const project = projects.find(p => p.id === projectId);
+    setProjects(prev => prev.filter(p => p.id !== projectId));
+    addNotification({
+      type: 'success',
+      title: '프로젝트 삭제됨',
+      message: `${project?.name} 프로젝트가 성공적으로 삭제되었습니다.`,
+    });
+  }, [projects, addNotification]);
+
   return {
     isLoading,
     projects,
     handleCreateProject,
+    handleUpdateProject,
+    handleDeleteProject,
   };
 };
