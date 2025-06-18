@@ -3,11 +3,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Project } from "@/types/project";
+import { User } from "@/types/user";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
+import { UserInput } from "@/components/UserInput";
 
 interface Props {
   onCreate: (project: Project) => void;
@@ -15,7 +18,12 @@ interface Props {
 
 export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", description: "" });
+  const [form, setForm] = useState({ 
+    name: "", 
+    description: "",
+    operators: [] as User[],
+    developers: [] as User[]
+  });
   const { toast } = useToast();
 
   const handleCreate = () => {
@@ -27,14 +35,25 @@ export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
       });
       return;
     }
+
+    const totalMembers = form.operators.length + form.developers.length;
+
     onCreate({
       id: Date.now().toString(),
       name: form.name,
       description: form.description,
       lastUpdated: new Date().toISOString().split('T')[0],
-      memberCount: 1,
+      memberCount: totalMembers,
+      operators: form.operators,
+      developers: form.developers,
     });
-    setForm({ name: "", description: "" });
+    
+    setForm({ 
+      name: "", 
+      description: "",
+      operators: [],
+      developers: []
+    });
     setOpen(false);
     toast({
       title: "성공",
@@ -66,33 +85,53 @@ export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
           </SidebarMenuButton>
         </div>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>새 프로젝트 생성</DialogTitle>
           <DialogDescription>
-            새로운 프로젝트를 생성하고 관리를 시작하세요.
+            새로운 프로젝트를 생성하고 팀원을 추가하세요.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="name">프로젝트 이름</Label>
-            <Input
-              id="name"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="프로젝트 이름을 입력하세요"
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4">
+            <div>
+              <Label htmlFor="name">프로젝트 이름 *</Label>
+              <Input
+                id="name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="프로젝트 이름을 입력하세요"
+              />
+            </div>
+            <div>
+              <Label htmlFor="description">프로젝트 설명</Label>
+              <Textarea
+                id="description"
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                placeholder="프로젝트 설명을 입력하세요"
+                className="min-h-[80px]"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <UserInput
+              label="운영자"
+              users={form.operators}
+              onUsersChange={(operators) => setForm({ ...form, operators })}
+              role="operator"
+            />
+            
+            <UserInput
+              label="개발자"
+              users={form.developers}
+              onUsersChange={(developers) => setForm({ ...form, developers })}
+              role="developer"
             />
           </div>
-          <div>
-            <Label htmlFor="description">설명</Label>
-            <Input
-              id="description"
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              placeholder="프로젝트 설명을 입력하세요"
-            />
-          </div>
-          <div className="flex justify-end space-x-2">
+
+          <div className="flex justify-end space-x-2 pt-4 border-t">
             <Button variant="outline" onClick={() => setOpen(false)}>
               취소
             </Button>
