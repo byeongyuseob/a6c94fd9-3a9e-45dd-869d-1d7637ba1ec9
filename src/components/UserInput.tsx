@@ -14,10 +14,18 @@ interface UserInputProps {
 }
 
 const roleOptions = [
-  { value: 'PM', label: 'PM' },
-  { value: 'FrontEnd', label: 'FrontEnd' },
-  { value: 'BackEnd', label: 'BackEnd' },
-  { value: 'Tester', label: 'Tester' }
+  { value: 'PM', label: 'PM (프로젝트 매니저)' },
+  { value: 'ProductOwner', label: 'PO (프로덕트 오너)' },
+  { value: 'FrontEnd', label: 'Frontend 개발자' },
+  { value: 'BackEnd', label: 'Backend 개발자' },
+  { value: 'Architect', label: '시스템 아키텍트' },
+  { value: 'Designer', label: 'UI/UX 디자이너' },
+  { value: 'DevOps', label: 'DevOps 엔지니어' },
+  { value: 'Tester', label: '테스터' },
+  { value: 'QA', label: 'QA 엔지니어' },
+  { value: 'DataAnalyst', label: '데이터 분석가' },
+  { value: 'Marketing', label: '마케팅' },
+  { value: 'Sales', label: '영업' }
 ] as const;
 
 export const UserInput = ({ label, users, onUsersChange }: UserInputProps) => {
@@ -52,7 +60,9 @@ export const UserInput = ({ label, users, onUsersChange }: UserInputProps) => {
                 <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium truncate">{user.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">{user.role}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {roleOptions.find(option => option.value === user.role)?.label || user.role}
+                  </p>
                 </div>
               </div>
               <Button
