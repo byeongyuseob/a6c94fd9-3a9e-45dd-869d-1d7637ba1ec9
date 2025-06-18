@@ -7,6 +7,5 @@ export interface Project {
   description: string;
   lastUpdated: string;
   memberCount: number;
-  operators: User[];
-  developers: User[];
+  members: User[];
 }

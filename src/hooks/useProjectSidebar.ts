@@ -21,8 +21,7 @@ export const useProjectSidebar = ({ onProjectSelect }: UseProjectSidebarProps) =
           description: "메인 웹 애플리케이션 프로젝트",
           lastUpdated: "2024-06-15",
           memberCount: 12,
-          operators: [],
-          developers: [],
+          members: [],
         },
         {
           id: "2",
@@ -30,8 +29,7 @@ export const useProjectSidebar = ({ onProjectSelect }: UseProjectSidebarProps) =
           description: "iOS/Android 모바일 애플리케이션",
           lastUpdated: "2024-06-14",
           memberCount: 8,
-          operators: [],
-          developers: [],
+          members: [],
         },
         {
           id: "3",
@@ -39,8 +37,7 @@ export const useProjectSidebar = ({ onProjectSelect }: UseProjectSidebarProps) =
           description: "백엔드 API 서버 프로젝트",
           lastUpdated: "2024-06-13",
           memberCount: 5,
-          operators: [],
-          developers: [],
+          members: [],
         },
       ]);
       setIsLoading(false);

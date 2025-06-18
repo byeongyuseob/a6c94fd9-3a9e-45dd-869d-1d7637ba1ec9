@@ -21,8 +21,7 @@ export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
   const [form, setForm] = useState({ 
     name: "", 
     description: "",
-    operators: [] as User[],
-    developers: [] as User[]
+    members: [] as User[]
   });
   const { toast } = useToast();
 
@@ -36,23 +35,19 @@ export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
       return;
     }
 
-    const totalMembers = form.operators.length + form.developers.length;
-
     onCreate({
       id: Date.now().toString(),
       name: form.name,
       description: form.description,
       lastUpdated: new Date().toISOString().split('T')[0],
-      memberCount: totalMembers,
-      operators: form.operators,
-      developers: form.developers,
+      memberCount: form.members.length,
+      members: form.members,
     });
     
     setForm({ 
       name: "", 
       description: "",
-      operators: [],
-      developers: []
+      members: []
     });
     setOpen(false);
     toast({
@@ -115,21 +110,11 @@ export const ProjectSidebarCreateDialog = ({ onCreate }: Props) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <UserInput
-              label="운영자"
-              users={form.operators}
-              onUsersChange={(operators) => setForm({ ...form, operators })}
-              role="operator"
-            />
-            
-            <UserInput
-              label="개발자"
-              users={form.developers}
-              onUsersChange={(developers) => setForm({ ...form, developers })}
-              role="developer"
-            />
-          </div>
+          <UserInput
+            label="팀원"
+            users={form.members}
+            onUsersChange={(members) => setForm({ ...form, members })}
+          />
 
           <div className="flex justify-end space-x-2 pt-4 border-t">
             <Button variant="outline" onClick={() => setOpen(false)}>

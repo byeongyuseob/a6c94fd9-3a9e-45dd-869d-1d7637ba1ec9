@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { X, Plus, User } from "lucide-react";
 import { User as UserType } from "@/types/user";
 
@@ -10,22 +11,27 @@ interface UserInputProps {
   label: string;
   users: UserType[];
   onUsersChange: (users: UserType[]) => void;
-  role: 'operator' | 'developer';
 }
 
-export const UserInput = ({ label, users, onUsersChange, role }: UserInputProps) => {
-  const [newUser, setNewUser] = useState({ name: "", email: "" });
+const roleOptions = [
+  { value: 'PM', label: 'PM' },
+  { value: 'FrontEnd', label: 'FrontEnd' },
+  { value: 'BackEnd', label: 'BackEnd' },
+  { value: 'Tester', label: 'Tester' }
+] as const;
+
+export const UserInput = ({ label, users, onUsersChange }: UserInputProps) => {
+  const [newUser, setNewUser] = useState({ name: "", role: "" as UserType['role'] | "" });
 
   const addUser = () => {
-    if (newUser.name.trim() && newUser.email.trim()) {
+    if (newUser.name.trim() && newUser.role) {
       const user: UserType = {
         id: Date.now().toString(),
         name: newUser.name.trim(),
-        email: newUser.email.trim(),
-        role: role
+        role: newUser.role as UserType['role']
       };
       onUsersChange([...users, user]);
-      setNewUser({ name: "", email: "" });
+      setNewUser({ name: "", role: "" });
     }
   };
 
@@ -46,7 +52,7 @@ export const UserInput = ({ label, users, onUsersChange, role }: UserInputProps)
                 <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium truncate">{user.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user.role}</p>
                 </div>
               </div>
               <Button
@@ -72,20 +78,28 @@ export const UserInput = ({ label, users, onUsersChange, role }: UserInputProps)
             onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
             className="text-sm"
           />
-          <Input
-            placeholder="이메일"
-            type="email"
-            value={newUser.email}
-            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-            className="text-sm"
-          />
+          <Select
+            value={newUser.role}
+            onValueChange={(value) => setNewUser({ ...newUser, role: value as UserType['role'] })}
+          >
+            <SelectTrigger className="text-sm">
+              <SelectValue placeholder="역할 선택" />
+            </SelectTrigger>
+            <SelectContent>
+              {roleOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <Button
           type="button"
           variant="outline"
           size="sm"
           onClick={addUser}
-          disabled={!newUser.name.trim() || !newUser.email.trim()}
+          disabled={!newUser.name.trim() || !newUser.role}
           className="w-full h-8 text-xs"
         >
           <Plus className="h-3 w-3 mr-1" />
