@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Pencil } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Permission } from "@/types/permission";
+import { Permission, IDC_OPTIONS } from "@/types/permission";
 import { getDefaultPermissions, getRoleText } from "@/utils/permissionUtils";
 import { IdcSelector } from "@/components/IdcSelector";
 
@@ -38,6 +38,19 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
     idc: permission.idc,
     role: permission.role,
   });
+
+  const handleRoleChange = (role: "regular" | "contract" | "manager" | "supermanager" | "developer") => {
+    // 매니저, 슈퍼매니저, 개발자는 모든 IDC에 권한 부여
+    const allIdcs = ["manager", "supermanager", "developer"].includes(role) 
+      ? [...IDC_OPTIONS] 
+      : editedUser.idc;
+
+    setEditedUser({ 
+      ...editedUser, 
+      role,
+      idc: allIdcs
+    });
+  };
 
   const handleEditUser = () => {
     if (!editedUser.employeeId.trim() || !editedUser.name.trim() || !editedUser.email.trim() || editedUser.idc.length === 0) {
@@ -109,19 +122,11 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
               placeholder="user@example.com"
             />
           </div>
-          <IdcSelector
-            label="IDC"
-            selectedIdcs={editedUser.idc}
-            onIdcsChange={(idcs) => setEditedUser({ ...editedUser, idc: idcs })}
-          />
           <div>
             <Label htmlFor="edit-role">역할</Label>
             <Select
               value={editedUser.role}
-              onValueChange={
-                (value: "regular" | "contract" | "manager" | "supermanager" | "developer") =>
-                  setEditedUser({ ...editedUser, role: value })
-              }
+              onValueChange={handleRoleChange}
             >
               <SelectTrigger aria-label="역할 선택">
                 <SelectValue placeholder="Role" />
@@ -135,6 +140,11 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
               </SelectContent>
             </Select>
           </div>
+          <IdcSelector
+            label="IDC"
+            selectedIdcs={editedUser.idc}
+            onIdcsChange={(idcs) => setEditedUser({ ...editedUser, idc: idcs })}
+          />
           <div className="flex justify-end space-x-2">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               취소
