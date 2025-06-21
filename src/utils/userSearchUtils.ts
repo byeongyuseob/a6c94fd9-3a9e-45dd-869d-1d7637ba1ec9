@@ -70,7 +70,34 @@ export interface EmployeeSearchResult {
   defaultIdc: string;
 }
 
+export interface UserProfile {
+  employeeId: string;
+  name: string;
+  email: string;
+  role: "regular" | "contract" | "manager" | "supermanager" | "developer";
+  defaultIdc: string;
+}
+
 export const searchEmployeeByEmployeeId = (employeeId: string): EmployeeSearchResult | null => {
   const employee = mockEmployeeData[employeeId as keyof typeof mockEmployeeData];
   return employee || null;
+};
+
+export const getAllUserProfiles = (): UserProfile[] => {
+  return Object.entries(mockEmployeeData).map(([employeeId, data]) => ({
+    employeeId,
+    ...data
+  }));
+};
+
+export const searchUserProfiles = (query: string): UserProfile[] => {
+  const allProfiles = getAllUserProfiles();
+  if (!query.trim()) return allProfiles;
+  
+  const lowerQuery = query.toLowerCase();
+  return allProfiles.filter(profile => 
+    profile.employeeId.toLowerCase().includes(lowerQuery) ||
+    profile.name.toLowerCase().includes(lowerQuery) ||
+    profile.email.toLowerCase().includes(lowerQuery)
+  );
 };
