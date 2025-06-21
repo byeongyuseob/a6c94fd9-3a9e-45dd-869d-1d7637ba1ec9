@@ -45,7 +45,7 @@ export const PermissionCard = ({ permissions, onEditUser, onDeleteUser }: Permis
             <TableRow>
               <TableHead>사번</TableHead>
               <TableHead>이름</TableHead>
-              <TableHead>이름</TableHead>
+              <TableHead>이메일</TableHead>
               <TableHead>IDC</TableHead>
               <TableHead>권한</TableHead>
               <TableHead>생성일</TableHead>
@@ -60,8 +60,19 @@ export const PermissionCard = ({ permissions, onEditUser, onDeleteUser }: Permis
                   {permission.employeeId}
                 </TableCell>
                 <TableCell>{permission.name}</TableCell>
-                <TableCell>{permission.name}</TableCell>
-                <TableCell>{permission.idc}</TableCell>
+                <TableCell>{permission.email}</TableCell>
+                <TableCell>
+                  <div className="space-y-1">
+                    {permission.idc.map((idc, index) => (
+                      <div 
+                        key={index}
+                        className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full inline-block mr-1"
+                      >
+                        {idc}
+                      </div>
+                    ))}
+                  </div>
+                </TableCell>
                 <TableCell>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(permission.role)}`}>
                     {getRoleText(permission.role)}

@@ -21,6 +21,7 @@ import { Pencil } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Permission } from "@/types/permission";
 import { getDefaultPermissions, getRoleText } from "@/utils/permissionUtils";
+import { IdcSelector } from "@/components/IdcSelector";
 
 interface EditUserDialogProps {
   permission: Permission;
@@ -39,7 +40,7 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
   });
 
   const handleEditUser = () => {
-    if (!editedUser.employeeId.trim() || !editedUser.name.trim() || !editedUser.email.trim() || !editedUser.idc.trim()) {
+    if (!editedUser.employeeId.trim() || !editedUser.name.trim() || !editedUser.email.trim() || editedUser.idc.length === 0) {
       toast({
         title: "오류",
         description: "사번, 이름, 이메일, IDC를 모두 입력해주세요.",
@@ -75,7 +76,7 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
           <Pencil className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>사용자 정보 수정</DialogTitle>
         </DialogHeader>
@@ -108,15 +109,11 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
               placeholder="user@example.com"
             />
           </div>
-          <div>
-            <Label htmlFor="edit-idc">IDC</Label>
-            <Input
-              id="edit-idc"
-              value={editedUser.idc}
-              onChange={(e) => setEditedUser({ ...editedUser, idc: e.target.value })}
-              placeholder="IDC001"
-            />
-          </div>
+          <IdcSelector
+            label="IDC"
+            selectedIdcs={editedUser.idc}
+            onIdcsChange={(idcs) => setEditedUser({ ...editedUser, idc: idcs })}
+          />
           <div>
             <Label htmlFor="edit-role">역할</Label>
             <Select

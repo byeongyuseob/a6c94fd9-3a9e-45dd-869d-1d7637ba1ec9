@@ -21,6 +21,7 @@ import { UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { NewUser, Permission } from "@/types/permission";
 import { getDefaultPermissions } from "@/utils/permissionUtils";
+import { IdcSelector } from "@/components/IdcSelector";
 
 interface AddUserDialogProps {
   onAddUser: (permission: Permission) => void;
@@ -33,12 +34,12 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
     employeeId: "",
     name: "",
     email: "",
-    idc: "",
+    idc: [],
     role: "regular",
   });
 
   const handleAddUser = () => {
-    if (!newUser.employeeId.trim() || !newUser.name.trim() || !newUser.email.trim() || !newUser.idc.trim()) {
+    if (!newUser.employeeId.trim() || !newUser.name.trim() || !newUser.email.trim() || newUser.idc.length === 0) {
       toast({
         title: "오류",
         description: "사번, 이름, 이메일, IDC를 모두 입력해주세요.",
@@ -62,7 +63,7 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
     };
 
     onAddUser(permission);
-    setNewUser({ employeeId: "", name: "", email: "", idc: "", role: "regular" });
+    setNewUser({ employeeId: "", name: "", email: "", idc: [], role: "regular" });
     setIsDialogOpen(false);
 
     toast({
@@ -79,7 +80,7 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
           사용자 추가
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>새 사용자 추가</DialogTitle>
         </DialogHeader>
@@ -112,15 +113,11 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
               placeholder="user@example.com"
             />
           </div>
-          <div>
-            <Label htmlFor="idc">IDC</Label>
-            <Input
-              id="idc"
-              value={newUser.idc}
-              onChange={(e) => setNewUser({ ...newUser, idc: e.target.value })}
-              placeholder="IDC001"
-            />
-          </div>
+          <IdcSelector
+            label="IDC"
+            selectedIdcs={newUser.idc}
+            onIdcsChange={(idcs) => setNewUser({ ...newUser, idc: idcs })}
+          />
           <div>
             <Label htmlFor="role">역할</Label>
               <Select
