@@ -3,7 +3,7 @@ export interface Permission {
   id: string;
   employeeId: string;
   name: string;
-  email: string;
+  idc: string;
   role: "regular" | "contract" | "manager" | "supermanager" | "developer";
   permissions: {
     read: boolean;
@@ -11,12 +11,16 @@ export interface Permission {
     delete: boolean;
     manage: boolean;
   };
-  lastActive: string;
+  createdDate: string;
+  modifiedDate: string;
+  email: string; // keeping for compatibility with dialogs
+  lastActive: string; // keeping for compatibility
 }
 
 export interface NewUser {
   employeeId: string;
   name: string;
   email: string;
+  idc: string;
   role: "regular" | "contract" | "manager" | "supermanager" | "developer";
 }

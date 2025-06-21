@@ -45,9 +45,11 @@ export const PermissionCard = ({ permissions, onEditUser, onDeleteUser }: Permis
             <TableRow>
               <TableHead>사번</TableHead>
               <TableHead>이름</TableHead>
-              <TableHead>메일주소</TableHead>
+              <TableHead>이름</TableHead>
+              <TableHead>IDC</TableHead>
               <TableHead>권한</TableHead>
-              <TableHead>최종 활동</TableHead>
+              <TableHead>생성일</TableHead>
+              <TableHead>수정일</TableHead>
               <TableHead>작업</TableHead>
             </TableRow>
           </TableHeader>
@@ -58,14 +60,18 @@ export const PermissionCard = ({ permissions, onEditUser, onDeleteUser }: Permis
                   {permission.employeeId}
                 </TableCell>
                 <TableCell>{permission.name}</TableCell>
-                <TableCell>{permission.email}</TableCell>
+                <TableCell>{permission.name}</TableCell>
+                <TableCell>{permission.idc}</TableCell>
                 <TableCell>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(permission.role)}`}>
                     {getRoleText(permission.role)}
                   </span>
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
-                  {permission.lastActive}
+                  {permission.createdDate}
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {permission.modifiedDate}
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-2">

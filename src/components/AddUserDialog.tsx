@@ -33,31 +33,36 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
     employeeId: "",
     name: "",
     email: "",
-    role: "regular", // Changed from "operator" to "regular"
+    idc: "",
+    role: "regular",
   });
 
   const handleAddUser = () => {
-    if (!newUser.employeeId.trim() || !newUser.name.trim() || !newUser.email.trim()) {
+    if (!newUser.employeeId.trim() || !newUser.name.trim() || !newUser.email.trim() || !newUser.idc.trim()) {
       toast({
         title: "오류",
-        description: "사번, 이름, 이메일을 모두 입력해주세요.",
+        description: "사번, 이름, 이메일, IDC를 모두 입력해주세요.",
         variant: "destructive",
       });
       return;
     }
 
+    const currentDate = new Date().toISOString().split('T')[0];
     const permission: Permission = {
       id: Date.now().toString(),
       employeeId: newUser.employeeId,
       name: newUser.name,
       email: newUser.email,
+      idc: newUser.idc,
       role: newUser.role,
       permissions: getDefaultPermissions(newUser.role),
-      lastActive: new Date().toISOString().split('T')[0],
+      createdDate: currentDate,
+      modifiedDate: currentDate,
+      lastActive: currentDate,
     };
 
     onAddUser(permission);
-    setNewUser({ employeeId: "", name: "", email: "", role: "regular" }); // Changed from "operator" to "regular"
+    setNewUser({ employeeId: "", name: "", email: "", idc: "", role: "regular" });
     setIsDialogOpen(false);
 
     toast({
@@ -105,6 +110,15 @@ export const AddUserDialog = ({ onAddUser }: AddUserDialogProps) => {
               value={newUser.email}
               onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
               placeholder="user@example.com"
+            />
+          </div>
+          <div>
+            <Label htmlFor="idc">IDC</Label>
+            <Input
+              id="idc"
+              value={newUser.idc}
+              onChange={(e) => setNewUser({ ...newUser, idc: e.target.value })}
+              placeholder="IDC001"
             />
           </div>
           <div>

@@ -34,14 +34,15 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
     employeeId: permission.employeeId,
     name: permission.name,
     email: permission.email,
+    idc: permission.idc,
     role: permission.role,
   });
 
   const handleEditUser = () => {
-    if (!editedUser.employeeId.trim() || !editedUser.name.trim() || !editedUser.email.trim()) {
+    if (!editedUser.employeeId.trim() || !editedUser.name.trim() || !editedUser.email.trim() || !editedUser.idc.trim()) {
       toast({
         title: "오류",
-        description: "사번, 이름, 이메일을 모두 입력해주세요.",
+        description: "사번, 이름, 이메일, IDC를 모두 입력해주세요.",
         variant: "destructive",
       });
       return;
@@ -52,8 +53,10 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
       employeeId: editedUser.employeeId,
       name: editedUser.name,
       email: editedUser.email,
+      idc: editedUser.idc,
       role: editedUser.role,
       permissions: getDefaultPermissions(editedUser.role),
+      modifiedDate: new Date().toISOString().split('T')[0],
     };
 
     onEditUser(updatedPermission);
@@ -103,6 +106,15 @@ export const EditUserDialog = ({ permission, onEditUser }: EditUserDialogProps) 
               value={editedUser.email}
               onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })}
               placeholder="user@example.com"
+            />
+          </div>
+          <div>
+            <Label htmlFor="edit-idc">IDC</Label>
+            <Input
+              id="edit-idc"
+              value={editedUser.idc}
+              onChange={(e) => setEditedUser({ ...editedUser, idc: e.target.value })}
+              placeholder="IDC001"
             />
           </div>
           <div>
